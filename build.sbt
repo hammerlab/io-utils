@@ -16,6 +16,7 @@ lazy val io = project.settings(
   deps ++= Seq(
     case_app,
     cats,
-    paths % "1.1.1-SNAPSHOT"
+    paths % "1.1.1-SNAPSHOT",
+    slf4j
   )
 )
