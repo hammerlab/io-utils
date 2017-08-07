@@ -1,4 +1,13 @@
 
+lazy val base =
+  project
+    .in(file("."))
+    .settings(
+      publish := { },
+      test := { }
+    )
+    .aggregate(bytes, io)
+
 lazy val bytes = project.settings(
   name := "bytes",
   version := "1.0.0",
