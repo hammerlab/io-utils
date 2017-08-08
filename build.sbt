@@ -1,15 +1,7 @@
 
-addScala212
+lazy val base = rootProject(bytes, io)
 
-lazy val base =
-  project
-    .in(file("."))
-    .settings(
-      publish := {},
-      test := {},
-      publishArtifact := false
-    )
-    .aggregate(bytes, io)
+addScala212
 
 lazy val bytes = project.settings(
   name := "bytes",
