@@ -1,19 +1,14 @@
 
-lazy val base =
-  project
-    .in(file("."))
-    .settings(
-      publish := { },
-      test := { }
-    )
-    .aggregate(bytes, io)
+lazy val base = rootProject(bytes, io)
+
+addScala212
 
 lazy val bytes = project.settings(
   name := "bytes",
   version := "1.0.0",
   deps ++= Seq(
     args4j,
-    args4s % "1.2.4",
+    args4s % "1.3.0",
     case_app,
     cats
   )
