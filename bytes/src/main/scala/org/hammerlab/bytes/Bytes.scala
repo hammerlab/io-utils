@@ -1,5 +1,7 @@
 package org.hammerlab.bytes
 
+import java.io.ObjectStreamException
+
 import caseapp.core.ArgParser
 import cats.Show
 import cats.Show.show
@@ -15,6 +17,21 @@ sealed abstract class Bytes(scale: Long) {
 
   override def toString: String =
     s"$value${getClass.getSimpleName}"
+
+  @throws[ObjectStreamException]
+  def writeReplace: Object = {
+    val sb = new SerializableBytes
+    sb.scale = scale
+    sb.value = value
+    sb
+  }
+}
+
+class SerializableBytes
+  extends Serializable {
+  var scale: Long = 0
+  var value: Int = 0
+  def readResolve: Any = Bytes(scale, value)
 }
 
 case class  B(value: Int) extends Bytes(1L <<  0)
@@ -61,6 +78,32 @@ object Bytes {
         throw BadBytesString(bytesStr)
     }
   }
+
+  val  BScale = 1L <<  0
+  val KBScale = 1L << 10
+  val MBScale = 1L << 20
+  val GBScale = 1L << 30
+  val TBScale = 1L << 40
+  val PBScale = 1L << 50
+  val EBScale = 1L << 60
+
+  def apply(scale: Long, value: Int): Bytes =
+    scale match {
+      case BScale ⇒
+        B(value)
+      case KBScale ⇒
+        KB(value)
+      case MBScale ⇒
+        MB(value)
+      case GBScale ⇒
+        GB(value)
+      case TBScale ⇒
+        TB(value)
+      case PBScale ⇒
+        PB(value)
+      case EBScale ⇒
+        EB(value)
+    }
 
   implicit def unwrapBytes(bytes: Bytes): Long = bytes.bytes
 
