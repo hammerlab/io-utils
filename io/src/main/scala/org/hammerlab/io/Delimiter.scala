@@ -1,6 +1,6 @@
 package org.hammerlab.io
 
-import cats.Show
+import cats.Show.show
 
 class Delimiter(override val toString: String)
 
@@ -13,8 +13,7 @@ object Delimiter {
 
   implicit def unwrap(delimiter: Delimiter): String = delimiter.toString
 
-  implicit val show: Show[Delimiter] =
-    Show.show(_.toString)
+  implicit val showDelimiter: cats.Show[Delimiter] = show(_.toString)
 
   object comma extends Delimiter(",") with SelfImplicit
   object commaSpace extends Delimiter(", ") with SelfImplicit

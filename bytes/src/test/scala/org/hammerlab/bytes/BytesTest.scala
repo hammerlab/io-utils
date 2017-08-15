@@ -1,6 +1,7 @@
 package org.hammerlab.bytes
 
 import org.hammerlab.test.Suite
+import org.hammerlab.test.serde.JavaSerialization._
 
 class BytesTest
   extends Suite {
@@ -181,5 +182,24 @@ class BytesTest
     check((  1L << 60) -   1, "1024P")
     check((  1L << 60) +   0,    "1E")
     check((  1L << 60) +   1,  "1.0E")
+  }
+
+  def roundTrip(bytes: Bytes): Unit = {
+    val serialized = javaBytes(bytes)
+    val after = javaRead[Bytes](serialized)
+    after should be(bytes)
+  }
+
+  test("serde") {
+    List(
+      Bytes("100"),
+      Bytes("2k"),
+      Bytes("23MB"),
+      Bytes("10G"),
+      Bytes("1TB"),
+      Bytes("1000P"),
+      Bytes("3EB")
+    )
+    .foreach(roundTrip)
   }
 }

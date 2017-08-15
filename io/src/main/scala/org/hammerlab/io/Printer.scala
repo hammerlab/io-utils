@@ -2,19 +2,8 @@ package org.hammerlab.io
 
 import java.io.PrintStream
 
-import cats.Show
-import cats.Show.{ Shown ⇒ CatsShown }
+import org.hammerlab.io.Show.Ops
 import org.hammerlab.paths.Path
-
-/**
- * Wrapper around [[cats.Show.Shown]] that wraps [[String]]s by default
- */
-final case class Shown(override val toString: String) extends AnyVal
-object Shown {
-  implicit def mat[A](x: A)(implicit z: Show[A]): Shown = Shown(z show x)
-  implicit def fromCats(shown: CatsShown): Shown = Shown(shown.toString)
-  implicit def fromString(str: String): Shown = Shown(str)
-}
 
 case class Printer(ps: PrintStream) {
   def print(os: Shown*): Unit =
@@ -22,14 +11,14 @@ case class Printer(ps: PrintStream) {
       ps.println(o)
     }
 
-  def printSamples(samples: Seq[_],
-                   populationSize: Long,
-                   header: String,
-                   truncatedHeader: Int ⇒ String,
-                   indent: String = "\t")(
-                      implicit
-                      sampleSize: SampleSize
-                  ): Unit = {
+  def printSamples[T: Show](samples: Seq[T],
+                            populationSize: Long,
+                            header: String,
+                            truncatedHeader: Int ⇒ String,
+                            indent: String = "\t")(
+      implicit
+      sampleSize: SampleSize
+  ): Unit = {
     sampleSize match {
       case SampleSize(Some(0)) ⇒
         // No-op
@@ -39,22 +28,25 @@ case class Printer(ps: PrintStream) {
           truncatedHeader(size),
           samples
             .take(size)
+            .map(_.show)
             .mkString(indent, s"\n$indent", ""),
           s"$indent…"
         )
       case _ ⇒
         print(
           header,
-          samples.mkString(indent, s"\n$indent", "")
+          samples
+            .map(_.show)
+            .mkString(indent, s"\n$indent", "")
         )
     }
   }
 
-  def printList(list: Seq[_],
-                header: String,
-                truncatedHeader: Int ⇒ String,
-                indent: String = "\t")(
-  implicit sampleSize: SampleSize
+  def printList[T: Show](list: Seq[T],
+                         header: String,
+                         truncatedHeader: Int ⇒ String,
+                         indent: String = "\t")(
+      implicit sampleSize: SampleSize
   ): Unit =
     printSamples(
       list,
@@ -90,11 +82,11 @@ object Printer {
   ): Unit =
     printer.print(os: _*)
 
-  def print(samples: Seq[_],
-            populationSize: Long,
-            header: String,
-            truncatedHeader: Int ⇒ String,
-            indent: String = "\t")(
+  def print[T: Show](samples: Seq[T],
+                     populationSize: Long,
+                     header: String,
+                     truncatedHeader: Int ⇒ String,
+                     indent: String = "\t")(
       implicit
       printer: Printer,
       sampleSize: SampleSize
@@ -107,9 +99,9 @@ object Printer {
       indent
     )
 
-  def print(list: Seq[_],
-            header: String,
-            truncatedHeader: Int ⇒ String)(
+  def print[T: Show](list: Seq[T],
+                     header: String,
+                     truncatedHeader: Int ⇒ String)(
       implicit
       printer: Printer,
       sampleSize: SampleSize
@@ -121,10 +113,10 @@ object Printer {
       indent = "\t"
     )
 
-  def print(list: Seq[_],
-            header: String,
-            truncatedHeader: Int ⇒ String,
-            indent: String)(
+  def print[T: Show](list: Seq[T],
+                     header: String,
+                     truncatedHeader: Int ⇒ String,
+                     indent: String)(
       implicit
       printer: Printer,
       sampleSize: SampleSize
@@ -135,15 +127,4 @@ object Printer {
       truncatedHeader,
       indent
     )
-
-  def sampleString(sampledLines: Seq[String], total: Long, indent: String = "\t"): String =
-    sampledLines
-      .mkString(
-        indent,
-        s"\n$indent",
-        if (sampledLines.size < total)
-          "\n$indent…"
-        else
-          ""
-      )
 }
