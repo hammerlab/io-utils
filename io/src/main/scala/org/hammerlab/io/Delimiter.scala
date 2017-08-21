@@ -1,7 +1,5 @@
 package org.hammerlab.io
 
-import cats.Show.show
-
 class Delimiter(override val toString: String)
 
 trait SelfImplicit {
@@ -12,6 +10,8 @@ object Delimiter {
   def apply(str: String): Delimiter = new Delimiter(str)
 
   implicit def unwrap(delimiter: Delimiter): String = delimiter.toString
+
+  import cats.Show.show
 
   implicit val showDelimiter: cats.Show[Delimiter] = show(_.toString)
 
