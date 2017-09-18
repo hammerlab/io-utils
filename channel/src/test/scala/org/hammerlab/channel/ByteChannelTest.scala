@@ -1,7 +1,8 @@
 package org.hammerlab.channel
 
-import java.io.{ IOException, InputStream }
-import java.nio.channels.FileChannel
+import java.io.{ EOFException, IOException }
+import java.nio.ByteBuffer
+import java.nio.channels.{ FileChannel, SeekableByteChannel ⇒ SeekableChannel }
 
 import org.hammerlab.channel.CachingChannel._
 import org.hammerlab.io.Buffer
@@ -10,29 +11,61 @@ import org.hammerlab.test.resources.File
 
 import scala.Array.fill
 
-case class InputStreamStub(reads: String*)
-  extends InputStream {
+case class ChannelStub(reads: String*)
+  extends SeekableChannel {
   val bytes =
     reads
-      .flatMap(
-        _
-          .map(_.toInt)
-          .toVector :+ -1
-      )
       .iterator
+      .zipWithIndex
+      .map {
+        case (str, idx) ⇒
+          str.length →
+            str
+              .iterator
+              .map(_.toInt)
+              .buffered
+      }
+      .buffered
 
-  override def read(): Int =
-    if (bytes.hasNext)
-      bytes.next()
-    else
+  var position = 0L
+  override def read(dst: ByteBuffer): Int = {
+    if (!bytes.hasNext)
       -1
+    else {
+      val (length, chars) = bytes.head
+
+      val remaining = dst.remaining()
+      val arr = dst.array()
+      val off = dst.position()
+
+      val taken = chars.take(remaining).toArray
+      for (i ← taken.indices) {
+        arr(off + i) = taken(i).toByte
+      }
+
+      if (!chars.hasNext)
+        bytes.next
+
+      dst.position(off + taken.length)
+      position += taken.length
+      taken.length
+    }
+  }
+
+  override def isOpen: Boolean = true
+  override def close(): Unit = ()
+
+  override def size(): Long = ???
+  override def truncate(size: Long): SeekableChannel = ???
+  override def position(newPosition: Long): SeekableChannel = ???
+  override def write(src: ByteBuffer): Int = ???
 }
 
 class ByteChannelTest
   extends Suite {
-  test("incomplete InputStream read") {
-    val ch: ByteChannel =
-      InputStreamStub(
+  test("incomplete one empty read") {
+    val ch: SeekableByteChannel =
+      ChannelStub(
         "12345",
         "67890",
         "1",
@@ -52,14 +85,48 @@ class ByteChannelTest
     ch.position() should be(8)
 
     b4.position(0)
+    ch.readFully(b4)
+    b4.array.map(_.toChar).mkString("") should be("9012")
+    ch.position() should be(12)
+
+    b4.position(0)
+    intercept[EOFException] {
+      ch.readFully(b4)
+    }
+  }
+
+  test("incomplete consecutive empty reads") {
+    val ch: SeekableByteChannel =
+      ChannelStub(
+        "12345",
+        "67890",
+        "1",
+        "",
+        "",
+        "234"
+      )
+
+    val b4 = Buffer(4)
+
+    ch.readFully(b4)
+    b4.array.map(_.toChar).mkString("") should be("1234")
+    ch.position() should be(4)
+
+    b4.position(0)
+    ch.readFully(b4)
+    b4.array.map(_.toChar).mkString("") should be("5678")
+    ch.position() should be(8)
+
+    b4.position(0)
     intercept[IOException] {
       ch.readFully(b4)
-    }.getMessage should be("Got 3 (2 then 1) of 4 bytes in 2 attempts from position 8")
+    }
+    .getMessage should be("Read 0 bytes twice in a row, 3 bytes into reading 4 from position 8")
   }
 
   test("read single bytes") {
-    val ch: ByteChannel =
-      InputStreamStub(
+    val ch: SeekableByteChannel =
+      ChannelStub(
         "12345",
         "67890",
         "1",

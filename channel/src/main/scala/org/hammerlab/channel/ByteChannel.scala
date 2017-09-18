@@ -22,49 +22,44 @@ trait ByteChannel
    * Read as many bytes into `dst` as it has remaining, throw an [[IOException]] if too few bytes exist or are read.
    */
   def readFully(dst: ByteBuffer): Unit = {
+    var totalRead = 0
     val numToRead = dst.remaining()
-
-    var numRead = read(dst)
-    if (numRead == -1)
-      throw new EOFException
-
-    if (numRead < numToRead) {
-      val secondRead = read(dst)
-      if (secondRead == -1)
+    var lastRead = -1
+    while (totalRead < numToRead) {
+      var numRead = read(dst)
+      if (numRead == -1)
         throw new EOFException
 
-      numRead += secondRead
-
-      if (numRead < numToRead)
+      if (numRead == 0 && lastRead == 0)
         throw new IOException(
-          s"Got $numRead (${numRead - secondRead} then $secondRead) of $numToRead bytes in 2 attempts from position ${position() - numRead}"
+          s"Read 0 bytes twice in a row, $totalRead bytes into reading $numToRead from position ${position() - totalRead}"
         )
+
+      lastRead = numRead
+      totalRead += numRead
     }
   }
+
   def readFully(bytes: Array[Byte]): Unit = readFully(bytes, 0, bytes.length)
   def readFully(bytes: Array[Byte], offset: Int, numToRead: Int): Unit = {
-    var numRead = read(bytes, offset, numToRead)
-    if (numRead == -1)
-      throw new EOFException
+    var lastRead = -1
+    var numLeft = numToRead
+    while (numLeft > 0) {
 
-    if (numRead < numToRead) {
-      val secondRead =
-        read(
-          bytes,
-          offset + numRead,
-          numToRead - numRead
-        )
-
-      if (secondRead == -1)
+      var numRead = read(bytes, offset, numToRead)
+      if (numRead == -1)
         throw new EOFException
 
-      numRead += secondRead
-    }
+      if (numRead == 0 && lastRead == 0) {
+        val totalRead = numToRead - numLeft
+        throw new IOException(
+          s"Read 0 bytes twice in a row, $totalRead bytes into reading $numToRead from ${position() - totalRead}"
+        )
+      }
 
-    if (numRead < numToRead)
-      throw new IOException(
-        s"Got $numRead of $numToRead bytes in 2 attempts from position ${position() - numRead}"
-      )
+      lastRead = numRead
+      numLeft -= numRead
+    }
   }
 
   override final def read: Int =

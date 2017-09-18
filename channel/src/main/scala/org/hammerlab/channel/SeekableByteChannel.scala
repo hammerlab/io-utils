@@ -1,9 +1,14 @@
 package org.hammerlab.channel
 
+import java.nio.channels.FileChannel
 import java.nio.file.Files.newByteChannel
-import java.nio.{ ByteBuffer, channels }
+import java.nio.file.OpenOption
+import java.nio.file.attribute.FileAttribute
+import java.nio.{ ByteBuffer, channels, file }
+import java.util
 
-import org.hammerlab.paths
+import com.sun.nio.zipfs.JarFileSystemProvider
+import org.hammerlab.paths.Path
 
 trait SeekableByteChannel
   extends ByteChannel {
@@ -38,11 +43,9 @@ object SeekableByteChannel {
   implicit def makeChannelByteChannel(ch: channels.SeekableByteChannel): ChannelByteChannel =
     ChannelByteChannel(ch)
 
-  implicit def apply(path: paths.Path): ChannelByteChannel =
+  implicit def apply(path: Path): ChannelByteChannel =
     ChannelByteChannel(
-      newByteChannel(
-        path
-      )
+      newByteChannel(path)
     )
 }
 
