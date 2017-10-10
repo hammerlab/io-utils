@@ -70,9 +70,6 @@ object Bytes {
             else
               throw BytesOverflowException(bytesStr)
           case Some("") | None ⇒ B(num)
-          case _ ⇒
-            // can't happen, just here to make compiler not warn
-            throw new Exception(s"bug in Bytes regex parsing…")
         }
       case _ ⇒
         throw BadBytesString(bytesStr)
@@ -120,7 +117,8 @@ object Bytes {
   def unapply(bytes: Bytes): Option[Long] = Some(bytes.bytes)
 
   object format {
-    implicit val showBytes: Show[Long] = show(format(_))
+    implicit val showLongBytes: Show[Long] = show(format(_))
+    implicit val showBytes: Show[Bytes] = show(format)
   }
 
   def format(bytes: Bytes): String = format(bytes.bytes)

@@ -44,9 +44,10 @@ trait ByteChannel
   def readFully(bytes: Array[Byte], offset: Int, numToRead: Int): Unit = {
     var lastRead = -1
     var numLeft = numToRead
+    var offset = 0
     while (numLeft > 0) {
 
-      var numRead = read(bytes, offset, numToRead)
+      var numRead = read(bytes, offset, numLeft)
       if (numRead == -1)
         throw new EOFException
 
@@ -57,6 +58,7 @@ trait ByteChannel
         )
       }
 
+      offset += numRead
       lastRead = numRead
       numLeft -= numRead
     }
