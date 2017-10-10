@@ -107,14 +107,14 @@ class ByteChannelTest
       )
 
     val b4 = Buffer(4)
+    val a4 = fill(4)(0.toByte)
 
     ch.readFully(b4)
     b4.array.map(_.toChar).mkString("") should be("1234")
     ch.position() should be(4)
 
-    b4.position(0)
-    ch.readFully(b4)
-    b4.array.map(_.toChar).mkString("") should be("5678")
+    ch.readFully(a4)
+    a4.map(_.toChar).mkString("") should be("5678")
     ch.position() should be(8)
 
     b4.position(0)

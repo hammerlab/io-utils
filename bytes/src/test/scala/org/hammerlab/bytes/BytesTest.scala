@@ -182,6 +182,14 @@ class BytesTest
     check((  1L << 60) -   1, "1024P")
     check((  1L << 60) +   0,    "1E")
     check((  1L << 60) +   1,  "1.0E")
+
+    Bytes.format(10.KB) should be("10K")
+    Bytes.format(10.KB, includeB = true) should be("10KB")
+
+    import cats.syntax.all._
+    import Bytes.format._
+    10.KB.show should be("10K")
+    10240L.show should be("10K")
   }
 
   def roundTrip(bytes: Bytes): Unit = {
