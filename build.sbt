@@ -26,11 +26,10 @@ lazy val channel = project.settings(
 )
 
 lazy val io = project.settings(
-  version := "1.2.0",
+  version := "2.0.0",
   deps ++= Seq(
     case_app,
     cats,
-    paths % "1.2.0",
-    slf4j
+    paths % "1.2.0"
   )
 )

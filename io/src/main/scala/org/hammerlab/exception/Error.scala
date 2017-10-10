@@ -1,5 +1,7 @@
 package org.hammerlab.exception
 
+import cats.Show
+
 case class Error(t: Throwable) {
   def lines(indent: String = "\t"): List[String] =
     t.toString() ::
@@ -15,4 +17,13 @@ case class Error(t: Throwable) {
 
   override def toString: String =
     lines().mkString("\n")
+}
+
+object Error {
+  implicit val show: Show[Error] =
+    Show.show {
+      _
+        .lines()
+        .mkString("\n")
+    }
 }
