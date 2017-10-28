@@ -93,6 +93,10 @@ class ByteChannelTest
     intercept[EOFException] {
       ch.readFully(b4)
     }
+
+    ch.isOpen should be(true)
+    ch.close()
+    ch.isOpen should be(false)
   }
 
   test("incomplete consecutive empty reads") {
