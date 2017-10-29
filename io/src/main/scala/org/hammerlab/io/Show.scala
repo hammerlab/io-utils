@@ -3,7 +3,7 @@ package org.hammerlab.io
 import cats.Show.{ Shown ⇒ CatsShown }
 
 /**
- * Wrapper for [[cats.Show]] that automatically accepts [[String]]s
+ * Wrapper for [[cats.Show]] that automatically accepts [[String]]s, [[Int]]s, and [[Long]]s
  */
 trait Show[T] {
   def show(f: T): String
@@ -11,6 +11,9 @@ trait Show[T] {
 
 object Show {
   implicit val showString: Show[String] = fromCats(cats.implicits.catsStdShowForString)
+  implicit val showInt: Show[Int] = fromCats(cats.implicits.catsStdShowForInt)
+  implicit val showLong: Show[Long] = fromCats(cats.implicits.catsStdShowForLong)
+
   implicit def fromCats[T](implicit wrapped: cats.Show[T]): Show[T] = new Show[T] {
     override def show(t: T): String = wrapped show t
   }
