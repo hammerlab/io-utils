@@ -1,10 +1,10 @@
 package org.hammerlab.io
 
-import org.hammerlab.io.Printer._
 import org.hammerlab.test.Suite
 
 class PrinterTest
-  extends Suite {
+  extends Suite
+    with CanPrint {
 
   def check(implicit
             printLimit: SampleSize,

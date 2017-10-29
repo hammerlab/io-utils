@@ -74,6 +74,10 @@ object Printer {
         System.out
     }
 
+}
+
+trait CanPrint {
+
   /**
    * Named to avoid overloading [[Predef.print]]
    */
@@ -128,3 +132,5 @@ object Printer {
       indent
     )
 }
+
+object CanPrint extends CanPrint
