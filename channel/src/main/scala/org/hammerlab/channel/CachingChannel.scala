@@ -35,13 +35,12 @@ case class CachingChannel[Channel <: SeekableByteChannel](channel: Channel)(
       0.7f,
       true
     ) {
-      override def removeEldestEntry(eldest: util.Map.Entry[Long, ByteBuffer]): Boolean = {
-        if (size() > maxNumBlocks) {
+      override def removeEldestEntry(eldest: util.Map.Entry[Long, ByteBuffer]): Boolean =
+        if (size() >= maxNumBlocks) {
           debug(s"Size ${size()} > max num blocks $maxNumBlocks (total size $maximumSize)")
           true
         } else
           false
-      }
     }
 
   def getBlock(idx: Long): ByteBuffer =

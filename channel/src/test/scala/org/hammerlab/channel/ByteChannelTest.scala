@@ -63,6 +63,9 @@ case class ChannelStub(reads: String*)
 
 class ByteChannelTest
   extends Suite {
+
+  val path = File("test.txt").path
+
   test("incomplete one empty read") {
     val ch: SeekableByteChannel =
       ChannelStub(
@@ -150,15 +153,15 @@ class ByteChannelTest
   def check(ch: ByteChannel): Unit = {
     ch.position should be(0)
 
-    ch.readString(4, includesNull = false) should be("log4")
+    ch.readString(4, includesNull = false) should be("0123")
     ch.position should be(4)
 
-    ch.read.toChar should be('j')
+    ch.read.toChar should be('4')
     ch.position should be(5)
 
     val bytes = fill(6)(0.toByte)
     ch.read(bytes) should be(6)
-    bytes.map(_.toChar).mkString("") should be(".rootC")
+    bytes.map(_.toChar).mkString("") should be("56789\n")
     ch.position should be(11)
 
     ch.read.toChar should be('a')
@@ -166,20 +169,23 @@ class ByteChannelTest
 
     val buf = Buffer(7)
     ch.read(buf) should be(7)
-    buf.array().map(_.toChar).mkString("") should be("tegory=")
+    buf.array().map(_.toChar).mkString("") should be("bcdefgh")
     ch.position should be(19)
 
     ch.skip(250)
     ch.position should be(269)
 
     ch.read(bytes, 1, 2)
-    bytes.slice(1, 3).map(_.toChar).mkString("") should be(": ")
+    bytes.slice(1, 3).map(_.toChar).mkString("") should be("QR")
     ch.position should be(271)
 
     buf.clear()
-    ch.read(buf) should be(5)
-    buf.array().slice(0, 5).map(_.toChar).mkString("") should be("%m%n\n")
-    ch.position should be(276)
+    ch.read(buf) should be(7)
+    buf.array().slice(0, 7).map(_.toChar).mkString("") should be("RSSTTUU")
+    ch.position should be(278)
+
+    ch.skip(169)
+    ch.position should be(447)
 
     ch.read should be(-1)
     ch.read(bytes) should be(-1)
@@ -191,31 +197,29 @@ class ByteChannelTest
   }
 
   test("InputStreamByteChannel") {
-    check(File("log4j.properties").inputStream)
+    check(path.inputStream)
   }
 
   test("IteratorByteChannel") {
     check(
-      File("log4j.properties")
+      path
         .readBytes
         .iterator
     )
   }
 
   test("ChannelByteChannel") {
-    check(FileChannel.open(File("log4j.properties").path): SeekableByteChannel)
+    check(FileChannel.open(path): SeekableByteChannel)
   }
 
   test("channel array read") {
-    val ch: SeekableByteChannel = FileChannel.open(File("log4j.properties").path)
+    val ch: SeekableByteChannel = FileChannel.open(path)
     val bytes = fill(4)(0.toByte)
     ch.read(bytes)
     ch.position() should be(4)
   }
 
   test("CachingChannel") {
-    val path = File("log4j.properties").path
-
     val ch = SeekableByteChannel(path)
 
     val cc = SeekableByteChannel(path).cache
