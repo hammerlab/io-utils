@@ -186,7 +186,7 @@ class BytesTest
     Bytes.format(10.KB) should be("10K")
     Bytes.format(10.KB, includeB = true) should be("10KB")
 
-    import cats.syntax.all._
+    import cats.syntax.show._
     import Bytes.format._
     10.KB.show should be("10K")
     10240L.show should be("10K")

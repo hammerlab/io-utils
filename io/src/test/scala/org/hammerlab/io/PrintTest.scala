@@ -1,6 +1,6 @@
 package org.hammerlab.io
 
-import cats.syntax.all._
+import hammerlab.show._
 import org.hammerlab.test.Suite
 
 /**

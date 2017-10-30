@@ -1,7 +1,8 @@
-package org.hammerlab.io.show
+package org.hammerlab.show
 
+import cats.instances.boolean.catsStdShowForBoolean
+import hammerlab.show.all._
 import org.hammerlab.test.Suite
-import cats.syntax.all._
 
 // Simple coproduct hierarchy
 sealed trait Foo

@@ -1,6 +1,6 @@
 package org.hammerlab.exception
 
-import cats.syntax.all._
+import hammerlab.show._
 import org.hammerlab.test.{ Suite, firstLinesMatch }
 import org.hammerlab.test.matchers.lines.Line._
 import org.hammerlab.test.version.Util.is2_12
