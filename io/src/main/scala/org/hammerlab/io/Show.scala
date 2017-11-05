@@ -10,9 +10,9 @@ trait Show[T] {
 }
 
 object Show {
-  implicit val showString: Show[String] = fromCats(cats.implicits.catsStdShowForString)
-  implicit val showInt: Show[Int] = fromCats(cats.implicits.catsStdShowForInt)
-  implicit val showLong: Show[Long] = fromCats(cats.implicits.catsStdShowForLong)
+  implicit val string: Show[String] = fromCats(cats.implicits.catsStdShowForString)
+  implicit val int: Show[Int] = fromCats(cats.implicits.catsStdShowForInt)
+  implicit val long: Show[Long] = fromCats(cats.implicits.catsStdShowForLong)
 
   implicit def fromCats[T](implicit wrapped: cats.Show[T]): Show[T] = new Show[T] {
     override def show(t: T): String = wrapped show t

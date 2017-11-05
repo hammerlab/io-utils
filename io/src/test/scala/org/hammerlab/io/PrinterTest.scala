@@ -14,8 +14,6 @@ class PrinterTest
 
     val list = 1 to 10
 
-    import cats.implicits.catsStdShowForInt
-
     print(
       list,
       "Integers:",
