@@ -1,7 +1,5 @@
 package org.hammerlab.io
 
-import cats.Show.{ Shown ⇒ CatsShown }
-
 /**
  * Wrapper for [[cats.Show]] that automatically accepts [[String]]s, [[Int]]s, and [[Long]]s
  */
@@ -21,15 +19,4 @@ object Show {
   implicit class Ops[T](t: T) {
     def show(implicit s: Show[T]): String = s show t
   }
-}
-
-/**
- * Wrapper for [[cats.Show.Shown]] that automatically accepts [[String]]s
- */
-final case class Shown(override val toString: String) extends AnyVal
-
-object Shown {
-  implicit def mat[A](x: A)(implicit z: cats.Show[A]): Shown = Shown(z show x)
-  implicit def fromCats(shown: CatsShown): Shown = Shown(shown.toString)
-  implicit def fromString(str: String): Shown = Shown(str)
 }

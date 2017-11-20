@@ -8,9 +8,12 @@ import org.hammerlab.test.version.Util.is2_12
 class ErrorTest
   extends Suite {
 
+  import hammerlab.exception._
+
   test("show") {
     val actual = Error(new NullPointerException).show
 
+    // Slight differences in stack-trace in 2.11 vs 2.12
     if (is2_12)
       actual should firstLinesMatch(
         "java.lang.NullPointerException",

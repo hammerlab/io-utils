@@ -1,7 +1,9 @@
 package org.hammerlab.exception
 
+import hammerlab.indent.{ Indent, tabs }
+
 case class StackTrace(elements: Seq[StackTraceElem]) {
-  def lines(indent: String = "\t"): List[String] =
+  def lines(implicit indent: Indent = tabs(1)): List[String] =
     elements
       .toList
       .map(
@@ -9,9 +11,7 @@ case class StackTrace(elements: Seq[StackTraceElem]) {
           s"$indent$elem"
       )
 
-  override def toString: String =
-    lines()
-      .mkString("\n")
+  override def toString: String = lines.mkString("\n")
 }
 
 object StackTrace {
@@ -19,9 +19,8 @@ object StackTrace {
     StackTrace(
       e
         .getStackTrace
-        .map(
-          e ⇒
-            e: StackTraceElem
-        )
+        .map {
+          e ⇒ e: StackTraceElem
+        }
     )
 }

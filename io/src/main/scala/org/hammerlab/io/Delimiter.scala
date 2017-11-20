@@ -1,14 +1,12 @@
 package org.hammerlab.io
 
-class Delimiter(override val toString: String)
+case class Delimiter(override val toString: String)
 
 trait SelfImplicit {
   implicit val self: this.type = this
 }
 
 object Delimiter {
-  def apply(str: String): Delimiter = new Delimiter(str)
-
   implicit def unwrap(delimiter: Delimiter): String = delimiter.toString
 
   import cats.Show.show
