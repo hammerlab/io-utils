@@ -38,8 +38,10 @@ object Indent {
     implicit def tab = io.tabs(0)
     def tabs(n: Int = 0) = io.tabs(n)
 
-    implicit def spaces2 = io.spaces2(0)
-    def spaces2(n: Int) = io.spaces2(n)
+    object spaces {
+      implicit def two = io.spaces2(0)
+      implicit def four = io.spaces4(0)
+    }
   }
   object instances extends instances
 

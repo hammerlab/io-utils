@@ -1,15 +1,15 @@
 package org.hammerlab.exception
 
 import cats.Show
-import hammerlab.indent.{ Indent, tabs }
+import hammerlab.indent._
 
 /**
  * Wrapper for a [[Throwable]] mimicking standard [[toString]], but with configurable indentation and [[cats.Show]]
  * integration
  */
 case class Error(t: Throwable) {
-  def lines(implicit indent: Indent = tabs(1)): List[String] =
-    t.toString() ::
+  def lines(implicit indent: Indent): List[String] =
+    s"$indent$t" :: indent {
       StackTrace(t).lines(indent) ++
         Option(t.getCause)
           .toList
@@ -18,6 +18,7 @@ case class Error(t: Throwable) {
               "Caused by:" ::
                 Error(cause).lines(indent)
           }
+    }
 
 
   override def toString: String =
@@ -25,10 +26,10 @@ case class Error(t: Throwable) {
 }
 
 object Error {
-  implicit val show: Show[Error] =
+  implicit def show(implicit indent: Indent = tab): Show[Error] =
     Show.show {
       _
-        .lines
+        .lines(indent)
         .mkString("\n")
     }
 }

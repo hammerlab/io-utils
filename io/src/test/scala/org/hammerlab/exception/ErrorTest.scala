@@ -11,30 +11,55 @@ class ErrorTest
   import hammerlab.exception._
 
   test("show") {
-    val actual = Error(new NullPointerException).show
+    import hammerlab.indent.spaces.two
+    val actual =
+      Error(
+        new IllegalArgumentException(
+          "error msg",
+          new NullPointerException
+        )
+      )
+      .show
 
     // Slight differences in stack-trace in 2.11 vs 2.12
-    if (is2_12)
+    if (is2_12) {
       actual should firstLinesMatch(
-        "java.lang.NullPointerException",
-        l"	at org.hammerlab.exception.ErrorTest.$$anonfun$$new$$1(ErrorTest.scala:$d)",
-        l"	at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:$d)",
-        l"	at org.scalatest.OutcomeOf.outcomeOf$$(OutcomeOf.scala:$d)",
-        l"	at org.scalatest.OutcomeOf$$.outcomeOf(OutcomeOf.scala:$d)",
-        l"	at org.scalatest.Transformer.apply(Transformer.scala:$d)",
-        l"	at org.scalatest.Transformer.apply(Transformer.scala:$d)",
-        l"	at org.scalatest.FunSuiteLike$$$$anon$$1.apply(FunSuiteLike.scala:$d)"
+        "java.lang.IllegalArgumentException: error msg",
+        l"  at org.hammerlab.exception.ErrorTest.$$anonfun$$new$$1(ErrorTest.scala:$d)",
+        l"  at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:$d)",
+        l"  at org.scalatest.OutcomeOf.outcomeOf$$(OutcomeOf.scala:$d)",
+        l"  at org.scalatest.OutcomeOf$$.outcomeOf(OutcomeOf.scala:$d)"
       )
-    else
+
+      val causedBy = actual.drop(actual.indexOf("Caused by:"))
+
+      causedBy should firstLinesMatch(
+        "Caused by:",
+        l"  java.lang.NullPointerException",
+        l"    at org.hammerlab.exception.ErrorTest.$$anonfun$$new$$1(ErrorTest.scala:$d)",
+        l"    at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:$d)",
+        l"    at org.scalatest.OutcomeOf.outcomeOf$$(OutcomeOf.scala:$d)",
+        l"    at org.scalatest.OutcomeOf$$.outcomeOf(OutcomeOf.scala:$d)",
+        l"    at org.scalatest.Transformer.apply(Transformer.scala:$d)"
+      )
+    } else {
       actual should firstLinesMatch(
-        "java.lang.NullPointerException",
-        l"	at org.hammerlab.exception.ErrorTest$$$$anonfun$$1.apply(ErrorTest.scala:$d)",
-        l"	at org.scalatest.OutcomeOf$$class.outcomeOf(OutcomeOf.scala:$d)",
-        l"	at org.scalatest.OutcomeOf$$.outcomeOf(OutcomeOf.scala:$d)",
-        l"	at org.scalatest.Transformer.apply(Transformer.scala:$d)",
-        l"	at org.scalatest.Transformer.apply(Transformer.scala:$d)",
-        l"	at org.scalatest.FunSuiteLike$$$$anon$$1.apply(FunSuiteLike.scala:$d)",
-        l"	at org.scalatest.TestSuite$$class.withFixture(TestSuite.scala:$d)"
+         "java.lang.IllegalArgumentException: error msg",
+        l"  at org.hammerlab.exception.ErrorTest$$$$anonfun$$1.apply(ErrorTest.scala:$d)",
+        l"  at org.scalatest.OutcomeOf$$class.outcomeOf(OutcomeOf.scala:$d)",
+        l"  at org.scalatest.OutcomeOf$$.outcomeOf(OutcomeOf.scala:$d)"
       )
+
+      val causedBy = actual.drop(actual.indexOf("Caused by:"))
+
+      causedBy should firstLinesMatch(
+         "Caused by:",
+        l"  java.lang.NullPointerException",
+        l"    at org.hammerlab.exception.ErrorTest$$$$anonfun$$1.apply(ErrorTest.scala:$d)",
+        l"    at org.scalatest.OutcomeOf$$class.outcomeOf(OutcomeOf.scala:$d)",
+        l"    at org.scalatest.OutcomeOf$$.outcomeOf(OutcomeOf.scala:$d)",
+        l"    at org.scalatest.Transformer.apply(Transformer.scala:$d)"
+      )
+    }
   }
 }

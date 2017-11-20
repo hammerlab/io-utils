@@ -1,9 +1,9 @@
 package org.hammerlab.exception
 
-import hammerlab.indent.{ Indent, tabs }
+import hammerlab.indent._
 
 case class StackTrace(elements: Seq[StackTraceElem]) {
-  def lines(implicit indent: Indent = tabs(1)): List[String] =
+  def lines(implicit indent: Indent = tab): List[String] =
     elements
       .toList
       .map(

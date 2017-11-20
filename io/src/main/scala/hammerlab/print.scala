@@ -9,4 +9,6 @@ object print {
 
   type SampleSize = org.hammerlab.io.SampleSize
   val  SampleSize = org.hammerlab.io.SampleSize
+
+  type CanPrint = org.hammerlab.io.CanPrint
 }
