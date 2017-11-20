@@ -2,7 +2,7 @@
 addScala212
 
 lazy val bytes = project.settings(
-  version := "1.0.3",
+  version := "1.1.0-SNAPSHOT",
   deps ++= Seq(
     args4j,
     args4s % "1.3.0",

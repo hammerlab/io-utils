@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 import java.util
 
 import grizzled.slf4j.Logging
-import org.hammerlab.bytes._
+import hammerlab.bytes._
 import org.hammerlab.channel.CachingChannel.Config
 import org.hammerlab.math.ceil
 

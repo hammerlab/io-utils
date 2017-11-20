@@ -55,16 +55,6 @@ class BytesTest
     intercept[BadBytesString] {Bytes("gb") }
   }
 
-  test("wrappers") {
-    32.B  should be( B(32))
-    32.KB should be(KB(32))
-    32.MB should be(MB(32))
-    32.GB should be(GB(32))
-    32.TB should be(TB(32))
-    32.PB should be(PB(32))
-    32.EB should be(EB(32))
-  }
-
   test("format") {
 
     def check(n: Long, expected: String): Unit = {
@@ -187,7 +177,7 @@ class BytesTest
     Bytes.format(10.KB, includeB = true) should be("10KB")
 
     import cats.syntax.show._
-    import Bytes.format._
+    import hammerlab.bytes.format._
     10.KB.show should be("10K")
     10240L.show should be("10K")
   }
