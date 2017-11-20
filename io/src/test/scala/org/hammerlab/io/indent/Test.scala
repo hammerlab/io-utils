@@ -1,6 +1,6 @@
 package org.hammerlab.io.indent
 
-import hammerlab.indent.{ Indent }
+import hammerlab.indent.Indent
 import hammerlab.show._
 import org.hammerlab.io.indent.Test._
 import org.hammerlab.io.tabs
@@ -45,8 +45,14 @@ class Test
 }
 
 object Test {
-  import cats.Show, Show.show
+  import cats.Show
+  import Show.show
 
+  /**
+   * Example coproduct that wraps an [[Int]] ([[Num]]) or a recursive collection of [[Foo]]s ([[Foos]])
+   *
+   * Used to demonstrate a [[cats.Show]] implementation with progressive levels of indentation; see [[Foos.showFoos]]
+   */
   sealed trait Foo
   object Foo {
     implicit def makeNum(n: Int): Num = Num(n)
@@ -63,8 +69,8 @@ object Test {
       show {
         case Foos(foos @ _*) ⇒
           foos map {
-            case foos: Foos ⇒ indent { showFoos.show(foos) }
-            case Num(n) ⇒ show"$indent$n"
+            case foos: Foos ⇒ indent { showFoos.show(foos) }  // Bump indentation level; recurse
+            case Num(n) ⇒ show"$indent$n"  // Prepend accumulated indent
           } mkString("\n")
       }
   }

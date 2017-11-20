@@ -11,12 +11,12 @@ case class Baz(b: Boolean) extends Foo
 case class Qux() extends Foo
 case object ZZZ extends Foo
 
-class GenericShowTest
+class ShowTest
   extends Suite {
 
   case class Anon(n: Int, s: String)
 
-  test("show") {
+  test("generic") {
     val bar = Bar(111, "aaa")
 
     bar.show should be("Bar(111,aaa)")
@@ -38,5 +38,10 @@ class GenericShowTest
     foos.map(_.show).mkString(" ") should be("Bar(111,aaa) Baz(true) Qux ZZZ$")
 
     Anon(123, "abc").show should be("Anon(123,abc)")
+  }
+
+  test("syntax") {
+    /** Show.apply alias for [[cats.Show.show]] */
+    showInt(4) should be("4")
   }
 }
