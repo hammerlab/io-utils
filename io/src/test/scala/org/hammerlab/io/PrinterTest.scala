@@ -6,6 +6,8 @@ class PrinterTest
   extends Suite
     with CanPrint {
 
+  import hammerlab.indent.tab
+
   def check(implicit
             printLimit: SampleSize,
             expected: String): Unit = {
@@ -106,6 +108,52 @@ class PrinterTest
     check(
       SampleSize(0),
       ""
+    )
+  }
+
+  test("indent blocks") {
+    val path = tmpPath()
+    implicit val print = Printer(path)
+    print(
+      "aaa",
+      "bbb",
+      indent(
+        "ccc",
+        indent(
+          indent("ddd"),
+          ""
+        ),
+        "eee"
+      ),
+      "fff"
+    )
+    indent {
+      print(
+        "ggg",
+        indent(
+          "hhh"
+        )
+      )
+      indent {
+        print(
+          "iii"
+        )
+      }
+    }
+    print.close()
+
+    path.read should be(
+      """aaa
+        |bbb
+        |	ccc
+        |			ddd
+        |		
+        |	eee
+        |fff
+        |	ggg
+        |		hhh
+        |		iii
+        |""".stripMargin
     )
   }
 }

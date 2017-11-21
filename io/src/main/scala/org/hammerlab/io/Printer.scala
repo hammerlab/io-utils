@@ -2,20 +2,43 @@ package org.hammerlab.io
 
 import java.io.PrintStream
 
-import org.hammerlab.io.Show.Ops
-import org.hammerlab.paths.Path
+import hammerlab.path._
 
-case class Printer(ps: PrintStream) {
-  def print(os: Shown*): Unit =
-    for { o ← os } {
-      ps.println(o)
+/**
+ * [[PrintStream]]-wrapper requiring [[Show]]s and providing utilities for printing collections of items
+ */
+case class Printer(ps: PrintStream)(
+    implicit
+    _indent: Indent = hammerlab.indent.tab
+) {
+
+  val token = _indent.token
+
+  private def line(s: String): Unit = {
+    ps.print(_indent)
+    ps.println(s)
+  }
+
+  def apply(os: Shown*): Unit =
+    os.foreach {
+      case Single(s) ⇒ line(s)
+      case Showns(ss) ⇒ ss.foreach { line }
     }
 
-  def printSamples[T: Show](samples: Seq[T],
+  def indent[T](body: ⇒ Unit): Unit = _indent { body }
+
+  def indent(showns: Shown*): Showns =
+    Showns(
+      showns.flatMap {
+        case Single(s) ⇒ Seq(s"$token$s")
+        case Showns(values) ⇒ values.map(s ⇒ s"$token$s")
+      }
+    )
+
+  def printSamples[T: Show](samples: Iterable[T],
                             populationSize: Long,
                             header: String,
-                            truncatedHeader: Int ⇒ String,
-                            indent: String = "\t")(
+                            truncatedHeader: Int ⇒ String)(
       implicit
       sampleSize: SampleSize
   ): Unit = {
@@ -24,36 +47,34 @@ case class Printer(ps: PrintStream) {
         // No-op
       case SampleSize(Some(size))
         if size + 1 < populationSize ⇒
-        print(
+        apply(
           truncatedHeader(size),
-          samples
-            .take(size)
-            .map(_.show)
-            .mkString(indent, s"\n$indent", ""),
-          s"$indent…"
+          indent(
+            samples.take(size),
+            "…"
+          )
         )
       case _ ⇒
-        print(
+        apply(
           header,
-          samples
-            .map(_.show)
-            .mkString(indent, s"\n$indent", "")
+          indent(
+            samples
+          )
         )
     }
   }
 
-  def printList[T: Show](list: Seq[T],
+  def printList[T: Show](list: Iterable[T],
                          header: String,
-                         truncatedHeader: Int ⇒ String,
-                         indent: String = "\t")(
-      implicit sampleSize: SampleSize
+                         truncatedHeader: Int ⇒ String)(
+      implicit
+      sampleSize: SampleSize
   ): Unit =
     printSamples(
       list,
       list.size,
       header,
-      truncatedHeader,
-      indent
+      truncatedHeader
     )
 
   def close(): Unit = ps.close()
@@ -61,76 +82,20 @@ case class Printer(ps: PrintStream) {
 
 object Printer {
 
-  implicit def makePrinter(ps: PrintStream): Printer = Printer(ps)
+  implicit def makePrinter(ps: PrintStream)(implicit indent: Indent): Printer = Printer(ps)
   implicit def unmakePrinter(p: Printer): PrintStream = p.ps
 
-  def apply(path: Path): Printer = apply(Some(path))
+  def apply(path: Path)(implicit indent: Indent): Printer = apply(Some(path))
 
-  def apply(path: Option[Path]): Printer =
+  def apply(path: Option[Path])(implicit indent: Indent): Printer =
     path match {
       case Some(path) ⇒
         new PrintStream(path.outputStream)
       case None ⇒
         System.out
     }
-
 }
 
-trait CanPrint {
 
-  /**
-   * Named to avoid overloading [[Predef.print]]
-   */
-  def echo(os: Shown*)(
-      implicit printer: Printer
-  ): Unit =
-    printer.print(os: _*)
 
-  def print[T: Show](samples: Seq[T],
-                     populationSize: Long,
-                     header: String,
-                     truncatedHeader: Int ⇒ String,
-                     indent: String = "\t")(
-      implicit
-      printer: Printer,
-      sampleSize: SampleSize
-  ): Unit =
-    printer.printSamples(
-      samples,
-      populationSize,
-      header,
-      truncatedHeader,
-      indent
-    )
 
-  def print[T: Show](list: Seq[T],
-                     header: String,
-                     truncatedHeader: Int ⇒ String)(
-      implicit
-      printer: Printer,
-      sampleSize: SampleSize
-  ): Unit =
-    print(
-      list,
-      header,
-      truncatedHeader,
-      indent = "\t"
-    )
-
-  def print[T: Show](list: Seq[T],
-                     header: String,
-                     truncatedHeader: Int ⇒ String,
-                     indent: String)(
-      implicit
-      printer: Printer,
-      sampleSize: SampleSize
-  ): Unit =
-    printer.printList(
-      list,
-      header,
-      truncatedHeader,
-      indent
-    )
-}
-
-object CanPrint extends CanPrint
