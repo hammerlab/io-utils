@@ -31,17 +31,25 @@ import hammerlab.print._
 `PrintStream`-like class for printing `Show`-able elements to a file or stdout:
 
 ```scala
+import hammerlab.path._, hammerlab.indent.tab
 implicit val printer = Printer(Path("out.txt"))  // Passing None will write to stdout
 print(
   "first line",
   "second line"
 )
 echo("third line")  // with one argument, need to avoid Predef.print name collision
+
+printer.close
+Path("out.txt").read
+// first line
+// second line
+// third line
 ```
 
 Print collections up to a maximum number of elements:
 
 ```scala
+implicit val printer = Printer(Path("out.txt"))
 implicit val samples = SampleSize(3)
 print(
   1 to 10,
@@ -67,6 +75,9 @@ print(
 Declaratively define a `cast.Show` for a class (see [PrintTest.scala](src/test/scala/org/hammerlab/io/PrintTest.scala)):
 
 ```scala
+:reset  // clear implicit printer above
+import hammerlab.print._, hammerlab.show._
+
 case class A(n: Int, s: String)
 
 object A {

@@ -4,10 +4,10 @@ import java.io.EOFException
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 
+import hammerlab.path._
 import org.hammerlab.channel.CachingChannel._
 import org.hammerlab.channel.SeekableByteChannel.ChannelByteChannel
 import org.hammerlab.io.Buffer
-import org.hammerlab.paths.Path
 import org.hammerlab.test.Suite
 import org.hammerlab.test.resources.File
 
