@@ -3,7 +3,7 @@ package org.hammerlab.channel
 import java.nio.file.Files.newByteChannel
 import java.nio.{ ByteBuffer, channels }
 
-import org.hammerlab.paths.Path
+import hammerlab.path._
 
 trait SeekableByteChannel
   extends ByteChannel {

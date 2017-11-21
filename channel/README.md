@@ -15,7 +15,7 @@ Classes for unifying, type-safening, and performance-improvening `java.io.InputS
 ## [`SeekableByteChannel`](src/main/scala/org/hammerlab/channel/SeekableByteChannel.scala)
 
 - [`ByteChannel`](#bytechannel) that adds `seek` and `size` methods
-- Additionally constructible from `java.nio.channels.SeekableByteChannel`s and `org.hammerlab.paths.Path`s
+- Additionally constructible from `java.nio.channels.SeekableByteChannel`s and `hammerlab.path.Path`s
 
 ## [`CachingByteChannel`](src/main/scala/org/hammerlab/channel/CachingChannel.scala)
 

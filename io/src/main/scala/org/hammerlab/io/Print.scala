@@ -2,6 +2,8 @@ package org.hammerlab.io
 
 import java.io.{ ByteArrayOutputStream, PrintStream }
 
+import hammerlab.indent.tab
+
 /**
  * Wrapper for implementing [[cats.Show]]s using a [[Printer]].
  *
@@ -21,7 +23,7 @@ import java.io.{ ByteArrayOutputStream, PrintStream }
  * [[ByteArrayOutputStream]] from which a string-representation is parsed.
  */
 abstract class Print[T](val t: T)(
-    implicit val indent: Indent
+    implicit val _indent: Indent = tab
 ) extends CanPrint
     with Serializable {
   val bytes = new ByteArrayOutputStream()
