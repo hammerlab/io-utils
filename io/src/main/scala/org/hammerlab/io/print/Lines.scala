@@ -2,6 +2,7 @@ package org.hammerlab.io.print
 
 import hammerlab.indent._
 import hammerlab.show._
+import org.hammerlab.io.print
 
 sealed trait Lines extends Any {
   def lines: Iterator[Line]
@@ -35,6 +36,8 @@ object Lines {
 
   implicit def wrapLines(lines: Iterable[Lines]): Lines = lines.flatMap(_.lines)
   implicit def unwrapLines(lines: Lines): Iterable[Line] = lines.lines.toIterable
+
+  def indent(lines: print.Lines*): Lines = lines.map(_.indent)
 
   implicit def show(implicit indent: Indent): Show[Lines] =
     Show {

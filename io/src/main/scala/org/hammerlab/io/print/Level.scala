@@ -1,4 +1,4 @@
-package org.hammerlab.io.indent
+package org.hammerlab.io.print
 
 case class Level(var v: Int) {
   def unary_+ : Level = { v += 1; this }

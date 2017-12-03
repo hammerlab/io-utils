@@ -1,10 +1,9 @@
-package org.hammerlab.io.indent
+package org.hammerlab.io.print
 
+import hammerlab.print._
 import hammerlab.show._
-import org.hammerlab.io.indent.Test._
-import org.hammerlab.io.print.Lines
+import org.hammerlab.io.print.Test._
 import org.hammerlab.test.Suite
-import Lines._
 
 class Test
   extends Suite {

@@ -1,9 +1,8 @@
 package org.hammerlab.exception
 
 import hammerlab.indent._
+import hammerlab.print._
 import hammerlab.show._
-import org.hammerlab.io.indent.{ Line, ToLines }
-import org.hammerlab.io.print.Lines
 
 /**
  * Wrapper for a [[Throwable]] mimicking standard [[toString]], but with configurable indentation and [[cats.Show]]

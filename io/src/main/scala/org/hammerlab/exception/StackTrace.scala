@@ -1,7 +1,6 @@
 package org.hammerlab.exception
 
-import org.hammerlab.io.indent.Line
-import org.hammerlab.io.print.Lines
+import org.hammerlab.io.print.{ Line, Lines }
 
 case class StackTrace(elements: Seq[StackTraceElem]) {
   def lines: Lines =

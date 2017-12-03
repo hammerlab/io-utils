@@ -2,10 +2,10 @@ package org.hammerlab.io.print
 
 import java.io.{ Closeable, PrintStream }
 
+import hammerlab.indent._
 import hammerlab.path._
 import hammerlab.show._
-import org.hammerlab.io
-import hammerlab.indent._
+import org.hammerlab.io.print.Lines._
 
 /**
  * [[PrintStream]]-wrapper requiring [[Show]]s and providing utilities for printing collections of items
@@ -14,8 +14,6 @@ abstract class Printer
   extends Closeable {
 
   def showLine(line: Line): Unit
-
-  def indent(lines: Lines*): Lines = lines.flatMap(_.lines).map(_.indent)
 
   def write(os: Lines*): Unit = apply(os: _*)
 
@@ -43,7 +41,7 @@ abstract class Printer
         if size + 1 < populationSize ⇒
         apply(
           truncatedHeader(size),
-          io.indent.ToLines.indent(
+          indent(
             Lines.iterableToLines(samples.take(size)),
             "…"
           )
@@ -51,7 +49,7 @@ abstract class Printer
       case _ ⇒
         apply(
           header,
-          io.indent.ToLines.indent(
+          indent(
             samples
           )
         )

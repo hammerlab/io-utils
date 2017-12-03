@@ -1,4 +1,4 @@
-package org.hammerlab.io.indent
+package org.hammerlab.io.print
 
 import hammerlab.show._
 

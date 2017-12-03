@@ -1,7 +1,5 @@
 package org.hammerlab.io.print
 
-import org.hammerlab.io.indent.ToLines
-
 /**
  * Convenient printing operations in the presence of an implicit [[Printer]]
  */
@@ -60,7 +58,4 @@ trait CanPrint {
       header,
       truncatedHeader
     )
-
-//  def indent[T](body: ⇒ Unit)(implicit p: Printer): Unit = p.indent { body }
-  def indent(showns: Lines*)(implicit p: Printer): Lines = showns.indent
 }

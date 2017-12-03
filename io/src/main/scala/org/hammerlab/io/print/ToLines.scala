@@ -1,7 +1,7 @@
-package org.hammerlab.io.indent
+package org.hammerlab.io.print
 
 import hammerlab.show._
-import org.hammerlab.io.print.Lines
+import org.hammerlab.io.print.Lines.indent
 import shapeless._
 
 import scala.reflect.ClassTag
@@ -18,14 +18,6 @@ object ToLines {
     }
 
   implicit def fromShow[T](implicit show: Show[T]): ToLines[T] = apply(t ⇒ Lines(show(t)))
-
-  implicit class LinesOps(val lines: Iterable[Line]) extends AnyVal {
-    def indent: Iterable[Line] = lines.map(_.indent)
-  }
-
-  import org.hammerlab.io.print
-
-  def indent(lines: print.Lines*): Iterable[Line] = lines.flatMap(_.lines).map(_.indent)
 
   implicit def generic[T, L <: HList](implicit
                                       gen: Generic.Aux[T, L],

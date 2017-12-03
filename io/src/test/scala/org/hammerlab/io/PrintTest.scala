@@ -1,10 +1,8 @@
 package org.hammerlab.io
 
-import hammerlab.indent.ToLines
 import hammerlab.indent.implicits.spaces2
+import hammerlab.print._
 import hammerlab.show._
-import org.hammerlab.io.print.Lines._
-import org.hammerlab.io.print.{ LinesPrinter, Print, Printer }
 import org.hammerlab.test.Suite
 
 class PrintTest
@@ -20,7 +18,7 @@ class PrintTest
 }
 
 /**
- * Example class with using [[Print]] syntax to construct a [[ToLines]] using a [[LinesPrinter]]
+ * Example class with using [[Print]] syntax to construct a [[ToLines]] using a [[org.hammerlab.io.print.LinesPrinter]]
  */
 case class A(n: Int, s: String)
 
