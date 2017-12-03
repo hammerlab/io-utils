@@ -2,8 +2,8 @@
 addScala212
 
 lazy val bytes = project.settings(
-  version := "1.1.0",
-  deps ++= Seq(
+  r"1.1.0",
+  dep(
     args4j,
     args4s % "1.3.0",
     case_app,
@@ -12,26 +12,26 @@ lazy val bytes = project.settings(
 )
 
 lazy val channel = project.settings(
-  version := "1.3.0-SNAPSHOT",
-  deps ++= Seq(
-    math % "2.1.0",
+  v"1.3.0",
+  dep(
+    log4j tests,
+     math % "2.1.1",
     paths % "1.4.0",
     slf4j
-  ),
-  testDeps += log4j
+  )
 ).dependsOn(
   bytes,
   io
 )
 
 lazy val io = project.settings(
-  version := "4.0.0-SNAPSHOT",
-  deps ++= Seq(
+  v"4.0.0",
+  dep(
     case_app,
     cats,
-    paths % "1.4.0",
+    paths           % "1.4.0",
     shapeless_utils % "1.1.0",
-    types % "1.0.1"
+    types           % "1.0.1"
   )
 )
 
