@@ -1,16 +1,17 @@
 package hammerlab
 
-import org.hammerlab.io.CanPrint
+import org.hammerlab.io
+import org.hammerlab.io.print.{ CanPrint, Printer, SampleSize }
 
 object print extends CanPrint {
-//  type Print[T] = org.hammerlab.io.Print[T]
-//  val  Print = org.hammerlab.io.Print
+  type Print[T] = io.print.Print[T]
+//   val Print    = io.print.Print
 
-  type Printer = org.hammerlab.io.Printer
-  val  Printer = org.hammerlab.io.Printer
+  type Printer = io.print.Printer
+   val Printer = io.print.Printer
 
-  type SampleSize = org.hammerlab.io.SampleSize
-  val  SampleSize = org.hammerlab.io.SampleSize
+  type SampleSize = io.print.SampleSize
+   val SampleSize = io.print.SampleSize
 
-  type CanPrint = org.hammerlab.io.CanPrint
+  type CanPrint = io.print.CanPrint
 }

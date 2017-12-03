@@ -4,43 +4,27 @@ import hammerlab.show._
 import org.hammerlab.io.indent.Test._
 import org.hammerlab.io.print.Lines
 import org.hammerlab.test.Suite
+import Lines._
 
 class Test
   extends Suite {
   test("tab") {
     import hammerlab.indent.implicits.tab
-    (Foos(
+    Foos(
       111,
       Foos(
         Foos(222),
         333,
         444
       )
-    ): Lines)
-    .show should be(
+    )
+    .showLines should be(
       """111
         |		222
         |	333
         |	444"""
         .stripMargin
     )
-  }
-
-  test("syntax") {
-//    val indent = tab
-//    indent.show should be("")
-//
-//    // increment preserves type
-//    val tab1: tabs = +indent
-//
-//    tab1.show should be("\t")
-//    indent.show should be("\t")
-//
-//    +indent
-//    indent.show should be("\t\t")
-//
-//    -indent
-//    indent.show.should(be("\t"))
   }
 }
 

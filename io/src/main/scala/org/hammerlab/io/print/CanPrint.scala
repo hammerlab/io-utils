@@ -1,7 +1,6 @@
-package org.hammerlab.io
+package org.hammerlab.io.print
 
-import org.hammerlab.io.indent.{ ToLines ⇒ ToLines }
-import org.hammerlab.io.print.Lines
+import org.hammerlab.io.indent.ToLines
 
 /**
  * Convenient printing operations in the presence of an implicit [[Printer]]

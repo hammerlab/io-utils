@@ -1,4 +1,4 @@
-package org.hammerlab.io
+package org.hammerlab.io.print
 
 import caseapp.core.ArgParser
 import caseapp.core.ArgParser.instance

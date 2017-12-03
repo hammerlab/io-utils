@@ -1,6 +1,7 @@
 package org.hammerlab.io
 
 import hammerlab.show._
+import org.hammerlab.io.print.{ CanPrint, Printer, SampleSize }
 import org.hammerlab.test.Suite
 
 class PrinterTest

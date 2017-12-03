@@ -1,14 +1,11 @@
-package org.hammerlab.io
+package org.hammerlab.io.print
 
 import java.io.{ Closeable, PrintStream }
 
 import hammerlab.path._
 import hammerlab.show._
 import org.hammerlab.io
-import org.hammerlab.io.indent.{ Indent, Line, ToLines }
-import org.hammerlab.io.print.Lines
-
-import scala.collection.mutable.ArrayBuffer
+import hammerlab.indent._
 
 /**
  * [[PrintStream]]-wrapper requiring [[Show]]s and providing utilities for printing collections of items
@@ -75,34 +72,6 @@ abstract class Printer
     )
 
   def close(): Unit = {}
-}
-
-case class StreamPrinter(ps: PrintStream)(
-    implicit val indent: Indent
-)
-  extends Printer {
-  override def showLine(line: Line): Unit = ps.println(line.show)
-  override def close(): Unit = ps.close()
-}
-
-case class LinesPrinter(implicit val _indent: Indent)
-  extends Printer {
-  val lines = ArrayBuffer[Line]()
-  override def showLine(line: Line): Unit = lines += line
-}
-
-class LinePrint[T](val t: T)(
-    implicit override val _indent: Indent
-)
-  extends LinesPrinter {
-
-}
-
-object LinePrint {
-  implicit def apply[T](fn: T ⇒ LinePrint[T]): ToLines[T] =
-    ToLines {
-      fn(_).lines
-    }
 }
 
 object Printer {
