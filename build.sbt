@@ -12,7 +12,7 @@ lazy val bytes = project.settings(
 )
 
 lazy val channel = project.settings(
-  version := "1.2.1",
+  version := "1.3.0-SNAPSHOT",
   deps ++= Seq(
     math % "2.1.0",
     paths % "1.4.0",
@@ -25,7 +25,7 @@ lazy val channel = project.settings(
 )
 
 lazy val io = project.settings(
-  version := "3.2.0-SNAPSHOT",
+  version := "4.0.0-SNAPSHOT",
   deps ++= Seq(
     case_app,
     cats,
