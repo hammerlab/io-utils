@@ -30,7 +30,8 @@ lazy val io = project.settings(
     case_app,
     cats,
     paths % "1.4.0",
-    shapeless_utils % "1.1.0"
+    shapeless_utils % "1.1.0",
+    types % "1.0.1"
   )
 )
 

@@ -30,7 +30,9 @@ object A {
 
       /** Contrived representation exercising a couple [[Printer]] syntaxes */
       write(
-        s"$n, $s",
+        s"$n, $s"
+      )
+      echo(
         indent(
           n * 2,
           s.reverse

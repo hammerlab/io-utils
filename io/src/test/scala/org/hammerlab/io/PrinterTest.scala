@@ -129,17 +129,23 @@ class PrinterTest
       ),
       "fff"
     )
-    print(
-      indent(
-        "ggg",
+
+    indent {
+      print(
         indent(
-          "hhh"
+          "ggg",
+          indent(
+            "hhh"
+          )
         )
-      ),
-      indent {
-        "iii"
-      }
-    )
+      )
+      print(
+        indent {
+          "iii"
+        }
+      )
+    }
+
 
     print.close()
 
@@ -151,9 +157,9 @@ class PrinterTest
         |		
         |	eee
         |fff
-        |	ggg
-        |		hhh
-        |	iii
+        |		ggg
+        |			hhh
+        |		iii
         |"""
         .stripMargin
     )

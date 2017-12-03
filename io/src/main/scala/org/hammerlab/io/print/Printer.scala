@@ -2,28 +2,49 @@ package org.hammerlab.io.print
 
 import java.io.{ Closeable, PrintStream }
 
-import hammerlab.indent._
+import hammerlab.monoid._
 import hammerlab.path._
+import hammerlab.print._
 import hammerlab.show._
-import org.hammerlab.io.print.Lines._
 
 /**
- * [[PrintStream]]-wrapper requiring [[Show]]s and providing utilities for printing collections of items
+ * Interface for writing [[Line]]s with configurable indentation levels
  */
 abstract class Printer
   extends Closeable {
 
-  def showLine(line: Line): Unit
+  protected def showLine(line: Line): Unit
 
+  /**
+   * Aliases for underlying [[apply]]
+   *
+   * [[print]] requires at least two arguments to avoid confusion with [[Predef.print]]
+   */
+  def  echo(os: Lines*): Unit = apply(os: _*)
   def write(os: Lines*): Unit = apply(os: _*)
+  def print(l1: Lines,
+            l2: Lines,
+            rest: Lines*): Unit = apply(l1, l2, rest)
+
+  implicit val level = Level(0)
+
+  def ind(fn: ⇒ Unit): Unit = {
+    level++;
+    fn
+    level--
+  }
 
   def apply(os: Lines*): Unit =
-    os.foreach {
+    os foreach {
       _
         .lines
         .foreach {
           line ⇒
-            showLine(line)
+            showLine(
+              line.copy(
+                level = line.level |+| level
+              )
+            )
         }
     }
 
@@ -42,7 +63,7 @@ abstract class Printer
         apply(
           truncatedHeader(size),
           indent(
-            Lines.iterableToLines(samples.take(size)),
+            samples.take(size),
             "…"
           )
         )
@@ -74,11 +95,11 @@ abstract class Printer
 
 object Printer {
 
-  implicit def makePrinter(ps: PrintStream)(implicit indent: Indent): Printer = StreamPrinter(ps)
+  implicit def makePrinter(ps: PrintStream)(implicit indent: Indent): StreamPrinter = StreamPrinter(ps)
 
-  def apply(path: Path)(implicit indent: Indent): Printer = apply(Some(path))
+  def apply(path: Path)(implicit indent: Indent): StreamPrinter = apply(Some(path))
 
-  def apply(path: Option[Path])(implicit indent: Indent): Printer =
+  def apply(path: Option[Path])(implicit indent: Indent): StreamPrinter =
     path match {
       case Some(path) ⇒
         new PrintStream(path.outputStream)

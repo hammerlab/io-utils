@@ -4,6 +4,8 @@ import hammerlab.show._
 import org.hammerlab.io.print
 
 sealed abstract class Indent(override val toString: String)
+  extends Serializable
+
 object Indent {
   implicit def show(implicit level: Level): Show[Indent] =
     Show {

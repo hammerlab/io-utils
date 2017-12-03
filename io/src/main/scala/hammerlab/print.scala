@@ -16,6 +16,7 @@ object print extends CanPrint {
   type CanPrint = io.print.CanPrint
 
   def indent(lines: Lines*): Lines = Lines.indent(lines: _*)
+  def indent(fn: ⇒ Unit)(implicit printer: Printer): Unit = printer.ind { fn }
 
   implicit def makeLinesOps[T](t: T): LinesOps[T] = new LinesOps(t)
 
