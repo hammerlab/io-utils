@@ -1,4 +1,4 @@
-package org.hammerlab.io
+package org.hammerlab.io.print
 
 import hammerlab.indent.implicits.spaces2
 import hammerlab.print._

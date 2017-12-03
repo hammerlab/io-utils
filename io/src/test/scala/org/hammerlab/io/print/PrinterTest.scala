@@ -1,4 +1,4 @@
-package org.hammerlab.io
+package org.hammerlab.io.print
 
 import hammerlab.print._
 import hammerlab.show._
