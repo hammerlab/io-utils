@@ -9,11 +9,11 @@ case class StackTraceElem(declaringClass: String,
 }
 
 object StackTraceElem {
-  implicit def fromStackTraceElement(element: StackTraceElement): StackTraceElem =
+  implicit def fromStackTraceElement(e: StackTraceElement): StackTraceElem =
     StackTraceElem(
-      element.getClassName,
-      element.getMethodName,
-      element.getFileName,
-      element.getLineNumber
+      e.getClassName,
+      e.getMethodName,
+      e.getFileName,
+      e.getLineNumber
     )
 }

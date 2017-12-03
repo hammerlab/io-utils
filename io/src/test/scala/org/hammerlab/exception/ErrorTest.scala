@@ -11,7 +11,7 @@ class ErrorTest
   import hammerlab.exception._
 
   test("show") {
-    import hammerlab.indent.spaces.two
+    import hammerlab.indent.implicits.spaces.two
     val actual =
       Error(
         new IllegalArgumentException(

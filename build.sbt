@@ -25,7 +25,7 @@ lazy val channel = project.settings(
 )
 
 lazy val io = project.settings(
-  version := "3.1.0",
+  version := "3.2.0-SNAPSHOT",
   deps ++= Seq(
     case_app,
     cats,

@@ -1,44 +1,41 @@
 package org.hammerlab.io
 
-import java.io.PrintStream
+import java.io.{ Closeable, PrintStream }
 
 import hammerlab.path._
+import hammerlab.show._
+import org.hammerlab.io
+import org.hammerlab.io.indent.{ Indent, Line, ToLines }
+import org.hammerlab.io.print.Lines
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * [[PrintStream]]-wrapper requiring [[Show]]s and providing utilities for printing collections of items
  */
-case class Printer(ps: PrintStream)(
-    implicit
-    _indent: Indent = hammerlab.indent.tab
-) {
+abstract class Printer
+  extends Closeable {
 
-  val token = _indent.token
+  def showLine(line: Line): Unit
 
-  private def line(s: String): Unit = {
-    ps.print(_indent)
-    ps.println(s)
-  }
+  def indent(lines: Lines*): Lines = lines.flatMap(_.lines).map(_.indent)
 
-  def apply(os: Shown*): Unit =
+  def write(os: Lines*): Unit = apply(os: _*)
+
+  def apply(os: Lines*): Unit =
     os.foreach {
-      case Single(s) ⇒ line(s)
-      case Showns(ss) ⇒ ss.foreach { line }
+      _
+        .lines
+        .foreach {
+          line ⇒
+            showLine(line)
+        }
     }
 
-  def indent[T](body: ⇒ Unit): Unit = _indent { body }
-
-  def indent(showns: Shown*): Showns =
-    Showns(
-      showns.flatMap {
-        case Single(s) ⇒ Seq(s"$token$s")
-        case Showns(values) ⇒ values.map(s ⇒ s"$token$s")
-      }
-    )
-
-  def printSamples[T: Show](samples: Iterable[T],
-                            populationSize: Long,
-                            header: String,
-                            truncatedHeader: Int ⇒ String)(
+  def printSamples[T: ToLines](samples: Iterable[T],
+                               populationSize: Long,
+                               header: String,
+                               truncatedHeader: Int ⇒ String)(
       implicit
       sampleSize: SampleSize
   ): Unit = {
@@ -49,24 +46,24 @@ case class Printer(ps: PrintStream)(
         if size + 1 < populationSize ⇒
         apply(
           truncatedHeader(size),
-          indent(
-            samples.take(size),
+          io.indent.ToLines.indent(
+            Lines.iterableToLines(samples.take(size)),
             "…"
           )
         )
       case _ ⇒
         apply(
           header,
-          indent(
+          io.indent.ToLines.indent(
             samples
           )
         )
     }
   }
 
-  def printList[T: Show](list: Iterable[T],
-                         header: String,
-                         truncatedHeader: Int ⇒ String)(
+  def printList[T: ToLines](list: Iterable[T],
+                            header: String,
+                            truncatedHeader: Int ⇒ String)(
       implicit
       sampleSize: SampleSize
   ): Unit =
@@ -77,13 +74,40 @@ case class Printer(ps: PrintStream)(
       truncatedHeader
     )
 
-  def close(): Unit = ps.close()
+  def close(): Unit = {}
+}
+
+case class StreamPrinter(ps: PrintStream)(
+    implicit val indent: Indent
+)
+  extends Printer {
+  override def showLine(line: Line): Unit = ps.println(line.show)
+  override def close(): Unit = ps.close()
+}
+
+case class LinesPrinter(implicit val _indent: Indent)
+  extends Printer {
+  val lines = ArrayBuffer[Line]()
+  override def showLine(line: Line): Unit = lines += line
+}
+
+class LinePrint[T](val t: T)(
+    implicit override val _indent: Indent
+)
+  extends LinesPrinter {
+
+}
+
+object LinePrint {
+  implicit def apply[T](fn: T ⇒ LinePrint[T]): ToLines[T] =
+    ToLines {
+      fn(_).lines
+    }
 }
 
 object Printer {
 
-  implicit def makePrinter(ps: PrintStream)(implicit indent: Indent): Printer = Printer(ps)
-  implicit def unmakePrinter(p: Printer): PrintStream = p.ps
+  implicit def makePrinter(ps: PrintStream)(implicit indent: Indent): Printer = StreamPrinter(ps)
 
   def apply(path: Path)(implicit indent: Indent): Printer = apply(Some(path))
 

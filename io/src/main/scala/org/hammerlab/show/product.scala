@@ -1,15 +1,14 @@
 package org.hammerlab.show
 
-import cats.Show
 import hammerlab.show._
 import shapeless._
 
 trait product {
-  implicit val showHNil: Show[HNil] = show { _ ⇒ "" }
+  implicit val showHNil: Show[HNil] = Show { _ ⇒ "" }
   implicit def showHList[H, T <: HList](implicit
                                         head: Show[H],
                                         tail: Show[T]): Show[H :: T] =
-    show[H :: T] {
+    Show {
       case h :: HNil ⇒
         h.show
       case h :: t ⇒
@@ -20,7 +19,7 @@ trait product {
                                           generic: Generic.Aux[T, G],
                                           showGeneric: Show[G]
                                          ): Show[T] =
-    show {
+    Show {
       t ⇒
         val name =
           t.getClass.getSimpleName match {

@@ -1,12 +1,13 @@
 package org.hammerlab.io
 
+import hammerlab.show._
 import org.hammerlab.test.Suite
 
 class PrinterTest
   extends Suite
     with CanPrint {
 
-  import hammerlab.indent.tab
+  import hammerlab.indent.implicits.tab
 
   def check(implicit
             printLimit: SampleSize,
@@ -127,19 +128,18 @@ class PrinterTest
       ),
       "fff"
     )
-    indent {
-      print(
+    print(
+      indent(
         "ggg",
         indent(
           "hhh"
         )
-      )
+      ),
       indent {
-        print(
-          "iii"
-        )
+        "iii"
       }
-    }
+    )
+
     print.close()
 
     path.read should be(
@@ -152,8 +152,9 @@ class PrinterTest
         |fff
         |	ggg
         |		hhh
-        |		iii
-        |""".stripMargin
+        |	iii
+        |"""
+        .stripMargin
     )
   }
 }

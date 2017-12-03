@@ -3,6 +3,7 @@ package org.hammerlab.io
 /**
  * Interface for an indent [[token]] (e.g. "\t", "  ") and level (repetitions of [[token]]
  */
+/*
 sealed abstract class Indent(val token: String)
   extends Serializable {
   var level: Int
@@ -47,3 +48,4 @@ object Indent {
 
   implicit def unwrap(indent: Indent): String = indent.toString
 }
+*/

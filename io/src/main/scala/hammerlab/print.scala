@@ -3,8 +3,8 @@ package hammerlab
 import org.hammerlab.io.CanPrint
 
 object print extends CanPrint {
-  type Print[T] = org.hammerlab.io.Print[T]
-  val  Print = org.hammerlab.io.Print
+//  type Print[T] = org.hammerlab.io.Print[T]
+//  val  Print = org.hammerlab.io.Print
 
   type Printer = org.hammerlab.io.Printer
   val  Printer = org.hammerlab.io.Printer
