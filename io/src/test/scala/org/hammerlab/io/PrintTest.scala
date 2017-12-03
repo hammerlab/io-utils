@@ -28,7 +28,7 @@ object A {
       // Unpack argument
       val A(n, s) = t
 
-      /** Contrived representation exercising a couple [[Printer]] syntaxes */
+      /** Contrived line-based representation exercising a couple [[Printer]] syntaxes */
       write(
         s"$n, $s"
       )
