@@ -1,12 +1,10 @@
 package hammerlab
 
 import org.hammerlab.io
+import org.hammerlab.io.print.CanPrint
 import org.hammerlab.io.print.Lines.LinesOps
-import org.hammerlab.io.print.{ CanPrint, Lines }
 
 object print extends CanPrint {
-  type Print[T] = io.print.Print[T]
-
   type Printer = io.print.Printer
    val Printer = io.print.Printer
 

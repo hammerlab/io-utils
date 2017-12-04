@@ -25,14 +25,13 @@ Exposes:
 ## [`print`](src/main/scala/hammerlab/print.scala)
 
 ```scala
-import hammerlab.print._
+import hammerlab.print._, hammerlab.path._, hammerlab.indent.implicits.tab
 ```
 
 ### `Printer`
 `PrintStream`-like class for printing `Show`-able elements to a file or stdout:
 
 ```scala
-import hammerlab.path._, hammerlab.indent.implicits.tab
 implicit val printer = Printer(Path("out.txt"))  // Passing None will write to stdout
 print(
   "first line",
@@ -74,20 +73,18 @@ print(
 // 	2
 ```
 
-### `Print`
-Declaratively define a `ToLines` conversion for a type for a class (see [PrintTest.scala](src/test/scala/org/hammerlab/io/PrintTest.scala)):
+### `ToLines`
+
+Control how classes are serialized to `Lines` with instances of the `ToLines` type-class:
 
 ```scala
-:reset  // clear implicit printer above
-import hammerlab.print._, hammerlab.show._, hammerlab.indent.implicits.tab
-
 case class A(n: Int, s: String)
 
 object A {
   implicit val toLines: ToLines[A] =
-    new Print(_: A) {
-      val A(n, s) = t
-      echo(
+    (a: A) ⇒ {
+      val A(n, s) = a
+      Lines(
         s"n: $n",
         indent { s"s: $s" }
       )

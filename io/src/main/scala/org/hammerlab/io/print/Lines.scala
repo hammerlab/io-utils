@@ -18,6 +18,10 @@ sealed trait Lines extends Any {
 
 object Lines {
 
+  case object Empty extends Lines {
+    override def lines: Iterator[Line] = Iterator()
+  }
+
   /**
    * Construct [[Lines]] from a single [[String]]
    */
@@ -61,6 +65,10 @@ object Lines {
    * Construct a [[Lines]] from a collection of [[ToLines]]-able objects
    */
   implicit def iterableToLines[T](ts: Iterable[T])(implicit lines: ToLines[T]): Lines = ts.flatMap(lines(_).lines)
+
+  implicit def optionToLines[T](t: Option[T])(implicit lines: ToLines[T]): Lines = t.map(lines(_)).getOrElse(Empty)
+
+  implicit def flattenOpt(lines: Option[Lines]): Lines = lines.getOrElse(Empty)
 
   /**
    * Implicitly unify a collection of [[Lines]], or flatten into a collection of [[Line]]s

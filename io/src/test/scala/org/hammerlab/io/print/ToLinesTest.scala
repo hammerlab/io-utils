@@ -36,6 +36,16 @@ class ToLinesTest
         .stripMargin
     )
   }
+
+  test("simple") {
+    import hammerlab.indent.implicits.spaces.two
+    A(123, "abc").showLines should be(
+      """123, abc
+        |  246
+        |  cba"""
+        .stripMargin
+    )
+  }
 }
 
 object ToLinesTest {
@@ -68,4 +78,23 @@ object ToLinesTest {
   }
 
   case class Pair(n: Int, s: String)
+
+  /**
+   * Example class with an "inline" [[ToLines]] instance
+   */
+  case class A(n: Int, s: String)
+
+  object A {
+    implicit val toLines: ToLines[A] =
+      (a: A) ⇒ {
+        val A(n, s) = a
+        Lines(
+          s"$n, $s",
+          indent(
+            n * 2,
+            s.reverse
+          )
+        )
+      }
+  }
 }

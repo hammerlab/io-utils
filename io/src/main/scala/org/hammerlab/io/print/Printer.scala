@@ -10,10 +10,12 @@ import hammerlab.show._
 /**
  * Interface for writing [[Line]]s with configurable indentation levels
  */
-trait Printer
+case class Printer(ps: PrintStream)(
+    implicit val _indent: Indent
+)
   extends Closeable {
 
-  protected def showLine(line: Line): Unit
+  protected def showLine(line: Line): Unit = ps.println(line.show)
 
   implicit val level = Level(0)
 
@@ -90,24 +92,22 @@ trait Printer
       truncatedHeader
     )
 
-  def close(): Unit = {}
+  def close(): Unit = ps.close()
 }
 
 object Printer {
 
-  implicit def makePrinter(ps: PrintStream)(implicit indent: Indent): StreamPrinter = StreamPrinter(ps)
+  implicit def makePrinter(ps: PrintStream)(implicit indent: Indent): Printer = Printer(ps)
 
-  def apply(path: Path)(implicit indent: Indent): StreamPrinter = apply(Some(path))
+  def apply(path: Path)(implicit indent: Indent): Printer = apply(Some(path))
 
-  def apply(path: Option[Path])(implicit indent: Indent): StreamPrinter =
+  def apply(path: Option[Path])(implicit indent: Indent): Printer =
     path match {
       case Some(path) ⇒
         new PrintStream(path.outputStream)
       case None ⇒
         System.out
     }
+
+  implicit def unwrap(p: Printer): PrintStream = p.ps
 }
-
-
-
-

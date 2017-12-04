@@ -20,6 +20,8 @@ trait LowPriToLines {
       override def apply(t: T): Lines = fn(t)
     }
 
+  implicit def fromFn[T](fn: T ⇒ Lines): ToLines[T] = ToLines(fn)
+
   /**
    * Default instance for product-types, overridden by more specific instances (e.g. based on [[Show]]s)
    */

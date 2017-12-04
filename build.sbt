@@ -32,6 +32,12 @@ lazy val io = project.settings(
     paths           % "1.4.0",
     shapeless_utils % "1.1.0",
     types           % "1.0.1"
+  ),
+  consoleImport(
+    "hammerlab.path._",
+    "hammerlab.print._",
+    "hammerlab.show._",
+    "hammerlab.indent.implicits.tab"
   )
 )
 
