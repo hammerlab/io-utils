@@ -12,10 +12,10 @@ lazy val bytes = project.settings(
 )
 
 lazy val channel = project.settings(
-  v"1.3.0",
+  r"1.3.0",
   dep(
     log4j tests,
-     math % "2.1.1",
+     math % "2.1.2",
     paths % "1.4.0",
     slf4j
   )
