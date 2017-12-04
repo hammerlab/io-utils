@@ -19,7 +19,7 @@ trait syntax
 
   implicit def ShowApplyOps[T] = Ops.ShowApplyOps[T] _
 
-  def show[A](f: A => String): Show[A] = cats.Show.show(f)
+  def  Show[A](f: A => String): Show[A] = cats.Show.show(f)
   type Show[A] = cats.Show[A]
 }
 

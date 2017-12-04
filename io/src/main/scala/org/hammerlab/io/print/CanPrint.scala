@@ -1,4 +1,4 @@
-package org.hammerlab.io
+package org.hammerlab.io.print
 
 /**
  * Convenient printing operations in the presence of an implicit [[Printer]]
@@ -8,7 +8,12 @@ trait CanPrint {
   /**
    * Alias to avoid colliding with [[Predef.print]] in the case of one argument
    */
-  def echo(os: Shown*)(
+  def echo(os: Lines*)(
+      implicit printer: Printer
+  ): Unit =
+    printer(os: _*)
+
+  def write(os: Lines*)(
       implicit printer: Printer
   ): Unit =
     printer(os: _*)
@@ -16,9 +21,9 @@ trait CanPrint {
   /**
    * Safe to use `print` name when there are at least two arguments; no risk of collision with [[Predef.print]]
    */
-  def print(l1: Shown,
-            l2: Shown,
-            rest: Shown*)(
+  def print(l1: Lines,
+            l2: Lines,
+            rest: Lines*)(
       implicit printer: Printer
   ): Unit = {
     printer(l1)
@@ -26,10 +31,10 @@ trait CanPrint {
     printer(rest: _*)
   }
 
-  def print[T: Show](samples: Seq[T],
-                     populationSize: Long,
-                     header: String,
-                     truncatedHeader: Int ⇒ String)(
+  def print[T: ToLines](samples: Seq[T],
+                        populationSize: Long,
+                        header: String,
+                        truncatedHeader: Int ⇒ String)(
       implicit
       printer: Printer,
       sampleSize: SampleSize
@@ -41,9 +46,9 @@ trait CanPrint {
       truncatedHeader
     )
 
-  def print[T: Show](list: Seq[T],
-                     header: String,
-                     truncatedHeader: Int ⇒ String)(
+  def print[T: ToLines](list: Seq[T],
+                        header: String,
+                        truncatedHeader: Int ⇒ String)(
       implicit
       printer: Printer,
       sampleSize: SampleSize
@@ -53,7 +58,4 @@ trait CanPrint {
       header,
       truncatedHeader
     )
-
-  def indent[T](body: ⇒ Unit)(implicit p: Printer): Unit = p.indent { body }
-  def indent(showns: Shown*)(implicit p: Printer): Showns = p.indent(showns: _*)
 }

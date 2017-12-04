@@ -1,8 +1,10 @@
 package hammerlab
 
 import org.hammerlab.io
+import org.hammerlab.io.print.{ implicits, instances }
 
 object indent
-  extends io.Indent.instances {
-  type Indent = io.Indent
+  extends instances {
+
+  object implicits extends implicits
 }

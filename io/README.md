@@ -8,7 +8,7 @@ Miscellaneous IO-related abstractions:
 
 ## [`show`](src/main/scala/hammerlab/show.scala)
 
-Extensions of [`cats.Show`](https://github.com/typelevel/cats/blob/v0.9.0/core/src/main/scala/cats/Show.scala):
+[`cats.Show`](https://github.com/typelevel/cats/blob/v0.9.0/core/src/main/scala/cats/Show.scala) helpers:
 
 ```scala
 import hammerlab.show._
@@ -19,19 +19,19 @@ Exposes:
 - `Show` instances for `String`s, `Int`s, and `Long`s
 - `.show` syntax
 - `Show`-instance derivations for `sealed trait`s and `case class`es
+- `Show` type and inline-definition syntax (also as `Show`; [example](src/main/scala/org/hammerlab/io/print/Line.scala#L12))
 
 
 ## [`print`](src/main/scala/hammerlab/print.scala)
 
 ```scala
-import hammerlab.print._
+import hammerlab.print._, hammerlab.path._, hammerlab.indent.implicits.tab
 ```
 
 ### `Printer`
 `PrintStream`-like class for printing `Show`-able elements to a file or stdout:
 
 ```scala
-import hammerlab.path._, hammerlab.indent.tab
 implicit val printer = Printer(Path("out.txt"))  // Passing None will write to stdout
 print(
   "first line",
@@ -49,6 +49,7 @@ Path("out.txt").read
 Print collections up to a maximum number of elements:
 
 ```scala
+import hammerlab.show._  // will use the default Show[Int] instance
 implicit val printer = Printer(Path("out.txt"))
 implicit val samples = SampleSize(3)
 print(
@@ -60,6 +61,7 @@ print(
 // 	1
 // 	2
 // 	3
+// 	…
 
 print(
   1 to 2,
@@ -71,28 +73,27 @@ print(
 // 	2
 ```
 
-### `Print`
-Declaratively define a `cast.Show` for a class (see [PrintTest.scala](src/test/scala/org/hammerlab/io/PrintTest.scala)):
+### `ToLines`
+
+Control how classes are serialized to `Lines` with instances of the `ToLines` type-class:
 
 ```scala
-:reset  // clear implicit printer above
-import hammerlab.print._, hammerlab.show._
-
 case class A(n: Int, s: String)
 
 object A {
-  implicit val showA =
-    Print[A] {
-      new Print(_) {
-        /** Unpack argument; implicit [[Printer]] is in scope */
-        val A(n, s) = t
-        echo(s"$n, $s")
-      }
+  implicit val toLines: ToLines[A] =
+    (a: A) ⇒ {
+      val A(n, s) = a
+      Lines(
+        s"n: $n",
+        indent { s"s: $s" }
+      )
     }
 }
 
-A(111, "aaa").show
-// "111, aaa\n"
+A(111, "aaa").showLines
+// n: 111
+// 	s: aaa
 ```
 
 ## [`timing`](src/main/scala/hammerlab/timing.scala)
