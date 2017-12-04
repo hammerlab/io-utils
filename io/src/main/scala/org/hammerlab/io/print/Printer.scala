@@ -10,10 +10,12 @@ import hammerlab.show._
 /**
  * Interface for writing [[Line]]s with configurable indentation levels
  */
-abstract class Printer
+trait Printer
   extends Closeable {
 
   protected def showLine(line: Line): Unit
+
+  implicit val level = Level(0)
 
   /**
    * Aliases for underlying [[apply]]
@@ -25,8 +27,6 @@ abstract class Printer
   def print(l1: Lines,
             l2: Lines,
             rest: Lines*): Unit = apply(l1, l2, rest)
-
-  implicit val level = Level(0)
 
   def ind(fn: ⇒ Unit): Unit = {
     level++;

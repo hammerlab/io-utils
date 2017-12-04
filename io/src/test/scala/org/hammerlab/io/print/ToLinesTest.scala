@@ -2,12 +2,12 @@ package org.hammerlab.io.print
 
 import hammerlab.print._
 import hammerlab.show._
-import org.hammerlab.io.print.Test._
+import org.hammerlab.io.print.ToLinesTest._
 import org.hammerlab.test.Suite
 
-class Test
+class ToLinesTest
   extends Suite {
-  test("tab") {
+  test("nested indents") {
     import hammerlab.indent.implicits.tab
     Foos(
       111,
@@ -25,14 +25,25 @@ class Test
         .stripMargin
     )
   }
+
+  test("generic") {
+    implicit val indent = hammerlab.indent.spaces.four
+    Pair(111, "aaa").showLines should be(
+      """Pair(
+        |    111
+        |    aaa
+        |)"""
+        .stripMargin
+    )
+  }
 }
 
-object Test {
+object ToLinesTest {
 
   /**
    * Example coproduct that wraps an [[Int]] ([[Num]]) or a recursive collection of [[Foo]]s ([[Foos]])
    *
-   * Used to demonstrate a [[cats.Show]] implementation with progressive levels of indentation; see [[Foos.showFoos]]
+   * Used to demonstrate a [[ToLines]] implementation with progressive levels of indentation; see [[Foos.toLines]]
    */
   sealed trait Foo
   object Foo {
@@ -46,13 +57,15 @@ object Test {
 
   case class Foos(foos: Foo*) extends Foo
   object Foos {
-    implicit val showFoos: ToLines[Foos] =
+    implicit val toLines: ToLines[Foos] =
       ToLines[Foos] {
         case Foos(foos @ _*) ⇒
           foos map {
-            case foos: Foos ⇒ showFoos.apply(foos).indent
+            case foos: Foos ⇒ toLines(foos).indent
             case Num(n) ⇒ Lines(n.show)
           }
       }
   }
+
+  case class Pair(n: Int, s: String)
 }

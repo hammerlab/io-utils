@@ -1,16 +1,8 @@
 package org.hammerlab.io.print
 
 case class Level(var v: Int) {
-  def unary_+ : Level = { v += 1; this }
-  def unary_- : Level = { v -= 1; this }
   def      ++ : Level = { v += 1; this }
   def      -- : Level = { v -= 1; this }
-  def apply[T](fn: ⇒ T): T = {
-    ++
-    val t = fn
-    --
-    t
-  }
 }
 
 object Level {
