@@ -17,7 +17,7 @@ Classes for unifying, type-safening, and performance-improvening `java.io.InputS
 - [`ByteChannel`](#bytechannel) that adds `seek` and `size` methods
 - Additionally constructible from `java.nio.channels.SeekableByteChannel`s and `hammerlab.path.Path`s
 
-## [`CachingByteChannel`](src/main/scala/org/hammerlab/channel/CachingChannel.scala)
+## [`CachingChannel`](src/main/scala/org/hammerlab/channel/CachingChannel.scala)
 
 - [`SeekableByteChannel`](#seekablebytechannel) that keeps an LRU cache of an underlying channel
 - Defaults: 64KB blocks, 64MB total size

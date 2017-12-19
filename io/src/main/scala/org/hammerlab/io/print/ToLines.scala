@@ -27,14 +27,14 @@ trait LowPriToLines {
    */
   implicit def generic[T, L <: HList](implicit
                                       gen: Generic.Aux[T, L],
-                                      tLines: ToLines[L],
+                                      tLines: Lazy[ToLines[L]],
                                       ct: ClassTag[T]): ToLines[T] =
     apply(
       t ⇒
         Lines(
           ct.runtimeClass.getSimpleName + "(",
           indent(
-            tLines(gen.to(t))
+            tLines.value(gen.to(t))
           ),
           ")"
         )
@@ -52,6 +52,36 @@ trait LowPriToLines {
     )
 
   implicit val hnil: ToLines[HNil] = apply(_ ⇒ Lines())
+
+  implicit def showSeq[T](implicit
+                          showT: ToLines[T],
+                          indent_ : Indent): ToLines[Seq[T]] =
+    ToLines {
+      t ⇒
+        if (t.isEmpty)
+          "Seq()"
+        else
+          Lines(
+            "Seq(",
+            indent(t.map(showT(_)): _*),
+            ")"
+          )
+    }
+
+  implicit def showVec[T](implicit
+                          showT: ToLines[T],
+                          indent_ : Indent): ToLines[Vector[T]] =
+    ToLines {
+      t ⇒
+        if (t.isEmpty)
+          "Seq()"
+        else
+          Lines(
+            "Seq(",
+            indent(t.map(showT(_)): _*),
+            ")"
+          )
+    }
 }
 
 object ToLines

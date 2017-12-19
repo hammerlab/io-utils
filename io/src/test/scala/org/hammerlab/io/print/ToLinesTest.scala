@@ -46,6 +46,48 @@ class ToLinesTest
         .stripMargin
     )
   }
+
+  val dropRightZeros = """^(.*?)0*$""".r
+  implicit val showDouble: Show[Double] =
+    Show {
+      d ⇒
+        "%.5f".format(d) match {
+          case dropRightZeros(s) ⇒
+            if (s.endsWith("."))
+              s"${s}0"
+            else
+              s
+        }
+    }
+
+  test("nested case classes and seqs") {
+    import hammerlab.indent.implicits.spaces.two
+    C(
+      Seq(
+        B(Vector(111, 222), 333),
+        B(Vector(444), 555)
+      )
+    )
+    .showLines should be(
+      """C(
+        |  Seq(
+        |    B(
+        |      Seq(
+        |        111.0
+        |        222.0
+        |      )
+        |      333.0
+        |    )
+        |    B(
+        |      Seq(
+        |        444.0
+        |      )
+        |      555.0
+        |    )
+        |  )
+        |)""".stripMargin
+    )
+  }
 }
 
 object ToLinesTest {
@@ -68,7 +110,7 @@ object ToLinesTest {
   case class Foos(foos: Foo*) extends Foo
   object Foos {
     implicit val toLines: ToLines[Foos] =
-      ToLines[Foos] {
+      ToLines {
         case Foos(foos @ _*) ⇒
           foos map {
             case foos: Foos ⇒ toLines(foos).indent
@@ -79,6 +121,9 @@ object ToLinesTest {
 
   case class Pair(n: Int, s: String)
 
+  case class B(values: Vector[Double], d: Double)
+  case class C(bs: Seq[B])
+
   /**
    * Example class with an "inline" [[ToLines]] instance
    */
@@ -86,15 +131,15 @@ object ToLinesTest {
 
   object A {
     implicit val toLines: ToLines[A] =
-      (a: A) ⇒ {
-        val A(n, s) = a
-        Lines(
-          s"$n, $s",
-          indent(
-            n * 2,
-            s.reverse
+      ToLines {
+        case A(n, s) ⇒
+          Lines(
+            s"$n, $s",
+            indent(
+              n * 2,
+              s.reverse
+            )
           )
-        )
       }
   }
 }
