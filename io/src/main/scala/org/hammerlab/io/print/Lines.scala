@@ -1,7 +1,10 @@
 package org.hammerlab.io.print
 
+import hammerlab.iterator._
 import hammerlab.show._
 import org.hammerlab.io.print
+
+import scala.reflect.ClassTag
 
 /**
  * Interface for groups of [[Line]]s as toString-like representations of objects.
@@ -53,7 +56,57 @@ object Lines {
    * `.showLines` syntax: convert an object to [[Lines]] and newline-join them to a [[String]]
    */
   implicit class LinesOps[T](val t: T) extends AnyVal {
-    def showLines(implicit lines: ToLines[T], indent: Indent): String = show.apply(lines(t))
+    def showLines(implicit
+                  lines: ToLines[T],
+                  indent: Indent): String = show.apply(lines(t))
+  }
+
+  implicit class LineJoinOps[S](val elems: S) extends AnyVal {
+    def join[T](delimiter: String)(
+        implicit
+        ev: S <:< Seq[T],
+        lines: ToLines[T],
+        name: Name[S]
+    ): Lines = {
+      elems match {
+        case Seq() ⇒
+          s"$name()"
+        case t ⇒
+          Lines(
+            s"$name(",
+            indent(
+              (
+                t
+                  .iterator
+                  .map(lines(_))
+                  .sliding2Opt
+                  .map {
+                    case (l, Some(_)) ⇒ l.append(delimiter)
+                    case (l, _) ⇒ l
+                  }
+                  .toSeq
+              ): _*
+            ),
+            ")"
+          )
+      }
+    }
+  }
+
+  implicit class AppendOps(val l: Lines) extends AnyVal {
+    def append(s: String): Lines =
+      l match {
+        case Empty ⇒ Empty
+        case Single(line) ⇒ Single(line + s)
+        case Multiple(lines) ⇒
+          val last = lines.last
+          Lines(
+            lines
+              .dropRight(1)
+              .toVector :+
+                last.copy(str = last.str + s)
+          )
+      }
   }
 
   /**

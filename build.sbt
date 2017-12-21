@@ -25,10 +25,11 @@ lazy val channel = project.settings(
 )
 
 lazy val io = project.settings(
-  r"4.0.0",
+  v"4.1.0",
   dep(
     case_app,
     cats,
+    iterators       % "2.0.0",
     paths           % "1.4.0",
     shapeless_utils % "1.1.0",
     types           % "1.0.1"

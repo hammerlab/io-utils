@@ -28,4 +28,7 @@ object print extends CanPrint {
 
   type ToLines[T] = io.print.ToLines[T]
   def ToLines[T] = io.print.ToLines[T] _
+
+  trait generic extends org.hammerlab.io.print.generic
+  object generic extends generic
 }
