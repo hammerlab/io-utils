@@ -20,18 +20,7 @@ class GenericLinesTest
     )
   }
 
-  val dropRightZeros = """^(.*?)0*$""".r
-  implicit val showDouble: Show[Double] =
-    Show {
-      d ⇒
-        "%.5f".format(d) match {
-          case dropRightZeros(s) ⇒
-            if (s.endsWith("."))
-              s"${s}0"
-            else
-              s
-        }
-    }
+  implicit val showDouble: Show[Double] = Show { "%.1f".format(_) }
 
   test("nested case classes and seqs") {
     import hammerlab.indent.implicits.spaces.two
