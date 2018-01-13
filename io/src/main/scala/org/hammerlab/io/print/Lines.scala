@@ -62,6 +62,10 @@ object Lines {
   }
 
   implicit class LineJoinOps[S](val elems: S) extends AnyVal {
+    /**
+     * Given a [[Seq]] of [[Lines]]-able elements, generate [[Lines]] with the [[Seq]] type and indented elements
+     * separated by a delimiter
+     */
     def join[T](delimiter: String)(
         implicit
         ev: S <:< Seq[T],
