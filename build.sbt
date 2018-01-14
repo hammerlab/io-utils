@@ -1,7 +1,6 @@
 
 lazy val bytes = project.settings(
   r"1.1.0",
-  addScala212,
   dep(
     args4j,
     args4s % "1.3.0",
@@ -12,7 +11,6 @@ lazy val bytes = project.settings(
 
 lazy val channel = project.settings(
   r"1.3.0",
-  addScala212,
   dep(
     log4j tests,
      math % "2.1.2",
@@ -26,7 +24,6 @@ lazy val channel = project.settings(
 
 lazy val io = project.settings(
   v"4.1.0",
-  addScala212,
   dep(
     case_app,
     cats,
