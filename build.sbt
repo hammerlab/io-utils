@@ -47,10 +47,17 @@ lazy val ioJVM = io.jvm.settings(
   )
 )
 
+lazy val parallel = project.settings(
+  v"1.0.0",
+).dependsOn(
+  ioJVM
+)
+
 lazy val io_utils =
   rootProject(
     "io-utils",
     channel,
+    parallel,
     bytesJVM, bytesJS,
        ioJVM,    ioJS
   )

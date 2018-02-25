@@ -69,11 +69,20 @@ trait LowPriority
 
 trait generic
   extends LowPriority {
-  implicit def showVec[T: ToLines](implicit name: Name[Vector[T]]): ToLines[Vector[T]] = showSeqTemplate[T, Vector[T]]
-  implicit def showArr[T](implicit
-                          lines: ToLines[T],
-                          name: Name[ Array[T]]): ToLines[ Array[T]] =
+
+  implicit def vectorLines[T: ToLines](implicit name: Name[Vector[T]]): ToLines[Vector[T]] =
+    showSeqTemplate[T, Vector[T]]
+
+  implicit def arrayLines[T](implicit
+                             lines: ToLines[T],
+                             name: Name[ Array[T]]): ToLines[ Array[T]] =
     ToLines { showSeq[T](lines, name.toString).apply(_) }
+
+  implicit def optionLines[T](implicit l: ToLines[T]): ToLines[Option[T]] =
+    ToLines {
+      case Some(t) ⇒ l(t)
+      case None ⇒ Lines()
+    }
 }
 
 object generic extends generic

@@ -2,6 +2,7 @@ package org.hammerlab.io.lines
 
 import hammerlab.iterator._
 import hammerlab.show._
+import org.hammerlab.io.lines.Lines.show
 import org.hammerlab.io.print.Printer
 
 /**
@@ -15,6 +16,8 @@ import org.hammerlab.io.print.Printer
 sealed trait Lines extends Any {
   def lines: Iterator[Line]
   def indent: Lines = lines.map(_.indent).toIterable
+  def showLines(implicit indent: Indent): String = Lines.show.apply(this)
+  def show(implicit indent: Indent): String = Lines.show.apply(this)
 }
 
 object Lines {
@@ -57,6 +60,8 @@ object Lines {
     def showLines(implicit
                   lines: ToLines[T],
                   indent: Indent): String = show.apply(lines(t))
+
+    def lines(implicit l: ToLines[T], indent: Indent): Lines = l(t)
   }
 
   implicit class LineJoinOps[S](val elems: S) extends AnyVal {
