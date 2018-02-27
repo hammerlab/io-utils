@@ -1,4 +1,10 @@
 
+default(
+  versions(
+    paths → "1.5.0".snapshot
+  )
+)
+
 lazy val bytes = crossProject.settings(
   v"1.2.0",
   dep(
@@ -14,7 +20,7 @@ lazy val channel = project.settings(
   dep(
     log4j tests,
      math % "2.1.2",
-    paths % "1.4.0",
+    paths,
     slf4j
   )
 ).dependsOn(
@@ -40,7 +46,7 @@ lazy val io = crossProject.settings(
 lazy val ioJS  = io.js
 lazy val ioJVM = io.jvm.settings(
   dep(
-    paths % "1.4.0"
+    paths
   ),
   consoleImport(
     "hammerlab.path._"
@@ -49,6 +55,7 @@ lazy val ioJVM = io.jvm.settings(
 
 lazy val parallel = project.settings(
   v"1.0.0",
+  publishTestJar
 ).dependsOn(
   ioJVM
 )

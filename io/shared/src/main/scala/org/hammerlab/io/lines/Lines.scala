@@ -2,7 +2,6 @@ package org.hammerlab.io.lines
 
 import hammerlab.iterator._
 import hammerlab.show._
-import org.hammerlab.io.lines.Lines.show
 import org.hammerlab.io.print.Printer
 
 /**

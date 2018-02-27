@@ -1,7 +1,6 @@
 package org.hammerlab.io.print
 
-import caseapp.core.ArgParser
-import caseapp.core.ArgParser.instance
+import caseapp.core.argparser._
 
 case class Limit(size: Option[Int]) {
   def <(other: Long): Boolean =
@@ -12,7 +11,7 @@ object Limit {
   implicit def apply(size: Int): Limit = Limit(Some(size))
 
   implicit val parser: ArgParser[Limit] =
-    instance("sample size") {
+    SimpleArgParser.from("sample size") {
       str ⇒
         Right(
           Limit(

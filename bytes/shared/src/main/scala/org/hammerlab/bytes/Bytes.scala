@@ -1,6 +1,6 @@
 package org.hammerlab.bytes
 
-import caseapp.core.ArgParser
+import caseapp.core.argparser._
 import cats.Show
 import cats.Show.show
 
@@ -87,7 +87,7 @@ object Bytes {
   implicit def unwrapBytes(bytes: Bytes): Long = bytes.bytes
 
   implicit val bytesParser =
-    ArgParser.instance[Bytes]("bytes") {
+    SimpleArgParser.from[Bytes]("bytes") {
       bytes ⇒
         Right(
           Bytes(
