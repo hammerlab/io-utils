@@ -1,14 +1,10 @@
 package hammerlab
 
-import hammerlab.print.Printer
-import org.hammerlab.io.lines.Lines.LinesOps
 import org.hammerlab.io
+import org.hammerlab.io.lines.HasLines
 
-object lines {
-  def indent(lines: Lines*): Lines = Lines.indent(lines: _*)
-  def indent(fn: ⇒ Unit)(implicit printer: Printer): Unit = printer.ind { fn }
-
-  implicit def makeLinesOps[T](t: T): LinesOps[T] = new LinesOps(t)
+object lines
+  extends HasLines {
 
   type Indent = io.lines.Indent
 

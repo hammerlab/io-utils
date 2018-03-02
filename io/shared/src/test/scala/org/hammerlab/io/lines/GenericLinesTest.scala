@@ -24,14 +24,50 @@ class GenericLinesTest
 
   import hammerlab.indent.implicits.spaces.two
 
-  test("nested case classes and seqs") {
+  test("options") {
+    None.showLines should be("None")
+    (None: Option[Int]).showLines should be("None")
+    Some(2).showLines should be("Some(2)")
+    Some("abc").showLines should be("Some(abc)")
+  }
+
+  test("tuples") {
+    (1, 2).showLines should be(
+      """(
+        |  1,
+        |  2
+        |)"""
+      .stripMargin
+    )
+
+    (1, "abc").showLines should be(
+      """(
+        |  1,
+        |  abc
+        |)"""
+        .stripMargin
+    )
+
+    (1, "abc", true).showLines should be(
+      """(
+        |  1,
+        |  abc,
+        |  true
+        |)"""
+        .stripMargin
+    )
+  }
+
+  val c =
     C(
       Seq(
         B(Vector(111, 222), 333),
         B(Vector(444), 555)
       )
     )
-    .showLines should be(
+
+  test("nested case classes") {
+    c.showLines should be(
       """C(
         |  Seq(
         |    B(
@@ -50,6 +86,67 @@ class GenericLinesTest
         |  )
         |)"""
         .stripMargin
+    )
+
+    D(None).showLines should be("D(None)")
+    D(Some(c)).showLines should be(
+      """D(
+        |  Some(
+        |    C(
+        |      Seq(
+        |        B(
+        |          Vector(
+        |            111.0,
+        |            222.0
+        |          ),
+        |          333.0
+        |        ),
+        |        B(
+        |          Vector(
+        |            444.0
+        |          ),
+        |          555.0
+        |        )
+        |      )
+        |    )
+        |  )
+        |)"""
+        .stripMargin
+    )
+  }
+
+  test("sealed trait") {
+    List(
+      B(Vector(777, 888), 999),
+      c
+    )
+    .showLines should be(
+      """List(
+        |  B(
+        |    Vector(
+        |      777.0,
+        |      888.0
+        |    ),
+        |    999.0
+        |  ),
+        |  C(
+        |    Seq(
+        |      B(
+        |        Vector(
+        |          111.0,
+        |          222.0
+        |        ),
+        |        333.0
+        |      ),
+        |      B(
+        |        Vector(
+        |          444.0
+        |        ),
+        |        555.0
+        |      )
+        |    )
+        |  )
+        |)""".stripMargin
     )
   }
 
@@ -77,6 +174,8 @@ class GenericLinesTest
 object GenericLinesTest {
   case class Pair(n: Int, s: String)
 
-  case class B(values: Vector[Double], d: Double)
-  case class C(bs: Seq[B])
+  sealed trait A extends Product with Serializable
+  case class B(values: Vector[Double], d: Double) extends A
+  case class C(bs: Seq[B]) extends A
+  case class D(c: Option[C])
 }

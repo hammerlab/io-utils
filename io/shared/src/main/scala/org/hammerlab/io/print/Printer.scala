@@ -14,7 +14,7 @@ case class Printer(ps: PrintStream)(
 )
   extends Closeable {
 
-  protected def showLine(line: Line): Unit = ps.println(line.show)
+  protected def showLine(line: String): Unit = ps.println(line)
 
   implicit val level = Level(0)
 
@@ -29,24 +29,11 @@ case class Printer(ps: PrintStream)(
             l2: Lines,
             rest: Lines*): Unit = apply(l1, l2, rest)
 
-  def ind(fn: ⇒ Unit): Unit = {
-    level++;
-    fn
-    level--
-  }
-
   def apply(os: Lines*): Unit =
     os foreach {
-      _
-        .lines
-        .foreach {
-          line ⇒
-            showLine(
-              line.copy(
-                level = line.level |+| level
-              )
-            )
-        }
+      _.foreach {
+        showLine
+      }
     }
 
   def limitedPrint[T: ToLines](elems: Iterable[T],

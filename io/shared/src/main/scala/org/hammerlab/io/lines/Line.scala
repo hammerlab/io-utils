@@ -8,10 +8,10 @@ case class Line(str: String, level: Level = 0) {
 
 object Line {
   implicit def wrap(s: String): Line = Line(s)
-  implicit def show(implicit indent: Indent): Show[Line] =
+  implicit def show(implicit i: Indent): Show[Line] =
     Show {
       case Line(str, level) ⇒
         implicit val l = level
-        show"$indent$str"
+        show"$level$str"
     }
 }

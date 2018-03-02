@@ -1,7 +1,7 @@
 
 default(
   versions(
-    paths → "1.5.0".snapshot
+    paths → "1.5.0"
   )
 )
 
@@ -19,7 +19,7 @@ lazy val channel = project.settings(
   v"1.4.0",
   dep(
     log4j tests,
-     math % "2.1.2",
+     math % "2.2.0",
     paths,
     slf4j
   )
@@ -33,11 +33,12 @@ lazy val io = crossProject.settings(
   dep(
     case_app,
     cats,
-    iterators       % "2.1.0".snapshot,
-    shapeless_utils % "1.2.0".snapshot,
-    types           % "1.0.2".snapshot
+    iterators       % "2.1.0",
+    shapeless_utils % "1.2.0",
+    types           % "1.1.0"
   ),
   consoleImport(
+    "hammerlab.lines._",
     "hammerlab.print._",
     "hammerlab.show._",
     "hammerlab.indent.implicits.tab"

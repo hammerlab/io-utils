@@ -17,8 +17,6 @@ trait PrinterTest
 
   def printer: TestPrinter
 
-//  implicit def unwrapTestPrinter(p: TestPrinter): Printer = p.printer
-
   def check(implicit
             printLimit: Limit,
             expected: String): Unit = {
@@ -138,21 +136,20 @@ trait PrinterTest
       "fff"
     )
 
-    indent {
-      echo(
+    echo(
+      indent(
+        "ggg",
         indent(
-          "ggg",
-          indent(
-            "hhh"
-          )
-        )
+          "hhh"
+        ),
+        "a,b,c".split(",")
       )
-      echo(
-        indent {
-          "iii"
-        }
+    )
+    echo(
+      indent(
+        "iii"
       )
-    }
+    )
 
     printer.read should be(
       """aaa
@@ -162,9 +159,12 @@ trait PrinterTest
         |		
         |	eee
         |fff
-        |		ggg
-        |			hhh
-        |		iii
+        |	ggg
+        |		hhh
+        |	a
+        |	b
+        |	c
+        |	iii
         |"""
         .stripMargin
     )

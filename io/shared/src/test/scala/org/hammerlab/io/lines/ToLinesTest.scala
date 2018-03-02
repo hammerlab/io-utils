@@ -60,7 +60,7 @@ object ToLinesTest {
       ToLines {
         case Foos(foos @ _*) ⇒
           foos map {
-            case foos: Foos ⇒ toLines(foos).indent
+            case foos: Foos ⇒ indent(foos)
             case Num(n) ⇒ Lines(n.show)
           }
       }

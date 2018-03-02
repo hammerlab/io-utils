@@ -1,15 +1,9 @@
 package org.hammerlab.exception
 
-import org.hammerlab.io.lines.{ Line, Lines }
+import hammerlab.lines._
+import hammerlab.show._
 
-case class StackTrace(elements: Seq[StackTraceElem]) {
-  def lines: Lines =
-    elements
-      .map(
-        e ⇒ Line(e.toString)
-      )
-}
-
+case class StackTrace(elements: Seq[StackTraceElem])
 object StackTrace {
   implicit def apply(e: Throwable): StackTrace =
     StackTrace(
@@ -19,4 +13,7 @@ object StackTrace {
           e ⇒ e: StackTraceElem
         }
     )
+
+  implicit val lines: ToLines[StackTrace] =
+    ToLines { _.elements.lines }
 }

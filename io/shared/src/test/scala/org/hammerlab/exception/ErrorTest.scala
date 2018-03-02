@@ -3,7 +3,6 @@ package org.hammerlab.exception
 import hammerlab.indent.implicits.spaces.two
 import hammerlab.lines._
 import org.hammerlab.Suite
-import org.hammerlab.test.firstLinesMatch
 import org.hammerlab.test.matchers.lines.Line
 
 abstract class ErrorTest

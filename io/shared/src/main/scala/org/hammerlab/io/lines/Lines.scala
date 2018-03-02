@@ -1,117 +1,140 @@
 package org.hammerlab.io.lines
 
+import java.io.PrintStream
+
 import hammerlab.iterator._
 import hammerlab.show._
-import org.hammerlab.io.print.Printer
+import org.hammerlab.io.lines.{ Indent ⇒ Ind }
 
 /**
- * Interface for groups of [[Line]]s as toString-like representations of objects.
+ * Interface for rendering objects to sequences of lines; a more structured version of [[cats.Show]], with support for
+ * indentation and multi-line pretty-printing.
  *
- * Implicitly created from a single [[String]], a group of [[Line]]s, or as the output of application of a [[ToLines]]
- * instance.
- *
- * Funneled through [[Printer]] interfaces to output to files/stdout.
+ * [[Lines]] can be implicitly created from a single [[String]], a group of [[Lines]]s, or by application of a
+ * [[ToLines]] instance.
  */
 sealed trait Lines extends Any {
-  def lines: Iterator[Line]
-  def indent: Lines = lines.map(_.indent).toIterable
-  def showLines(implicit indent: Indent): String = Lines.show.apply(this)
-  def show(implicit indent: Indent): String = Lines.show.apply(this)
+  /*
+   * these methods are provided for all types via [[Lines.Ops]], but are denormalized here because that "ops" pattern
+   * doesn't work on [[Any]]s
+   */
+  def showLines(implicit indent: Ind): String = Lines.show.apply(this)
+  def show(implicit indent: Ind): String = Lines.show.apply(this)
 }
 
 object Lines {
 
-  case object Empty extends Lines {
-    override def lines: Iterator[Line] = Iterator()
+  val empty = Lines()
+
+  def unapply(lines: Lines): Option[Stream[Line]] =
+    Some(unrollIndents(lines).toStream)
+
+  /* Node indicating that its descendents should be indented by one level */
+  case class Indent(lines: Lines) extends Lines
+  object Indent {
+    def apply(level: Level, lines: Lines): Lines =
+      if (level.v == 0)
+        lines
+      else
+        Indent(
+          level - 1,
+          Indent(lines)
+        )
   }
+
+  implicit def fromLine(line: Line): Lines = Indent(line.level, line.str)
 
   /**
    * Construct [[Lines]] from a single [[String]]
    */
-  case class Single(line: String)
-    extends AnyVal
-      with Lines {
-    override def lines: Iterator[Line] = Iterator(Line(line))
-  }
-  implicit def fromString(line: String): Single = Single(line)
-
-  /**
-   * Construct [[Lines]] from a collection of [[Line]]s
-   */
-  case class Multiple(v: Iterable[Line])
-    extends AnyVal
-      with Lines {
-    override def lines: Iterator[Line] = v.iterator
-  }
-  implicit def fromLines(lines: Iterable[Line]): Multiple = Multiple(lines)
+  private case class Single(line: String)
+     extends AnyVal
+        with Lines
+  implicit def apply(line: String): Lines = Single(line)
 
   /**
    * Construct a [[Lines]] from other [[Lines]] instances
    */
-  def apply(lines: Lines*): Lines = lines.flatMap(_.lines)
-
-  implicit def unwrap(lines: Lines): Iterator[Line] = lines.lines
+  private case class Multiple(v: Iterable[Lines])
+     extends AnyVal
+        with Lines
+  def apply(lines: Lines*): Lines = Multiple(lines)
+  implicit def wrapLines(lines: Iterable[Lines]): Lines = Multiple(lines)
+  implicit def wrapArray(lines: Array[Lines]): Lines = Multiple(lines)
 
   /**
-   * `.showLines` syntax: convert an object to [[Lines]] and newline-join them to a [[String]]
+   * Traverse a tree of [[Lines]] and emit [[Line]]s with [[Line.level indentation-level]] and [[Line.str msg]]
+   * components
    */
-  implicit class LinesOps[T](val t: T) extends AnyVal {
+  def unrollIndents(lines: Lines): Iterator[Line] =
+    lines match {
+      case Indent(lines) ⇒
+        unrollIndents(lines)
+          .map {
+            case Line(str, level) ⇒
+                 Line(str, level++)
+          }
+      case Single(str) ⇒ Iterator(Line(str))
+      case Multiple(lines) ⇒
+        lines
+          .iterator
+          .flatMap(unrollIndents)
+    }
+
+  /* Given an [[org.hammerlab.lines.Indent]], serialize a [[Lines]] to [[String]]s */
+  implicit def unwrap(lines: Lines)(implicit i: Ind): Iterator[String] =
+    unrollIndents(lines).map { toShow(_).show }
+
+  def printlns(lines: Lines*)(implicit i: Ind, ps: PrintStream = System.out): Unit =
+    ps.println(Lines(lines).showLines)
+
+  implicit class Ops[T](val t: T) extends AnyVal {
+    /* convert an object to [[Lines]] and newline-join them to a [[String]] */
     def showLines(implicit
                   lines: ToLines[T],
-                  indent: Indent): String = show.apply(lines(t))
+                  i: Ind): String = show.apply(lines(t))
 
-    def lines(implicit l: ToLines[T], indent: Indent): Lines = l(t)
+    /* Convert an object to [[Lines]] */
+    def lines(implicit l: ToLines[T]): Lines = l(t)
   }
 
-  implicit class LineJoinOps[S](val elems: S) extends AnyVal {
+  implicit class JoinOps[S](val elems: S) extends AnyVal {
     /**
-     * Given a [[Seq]] of [[Lines]]-able elements, generate [[Lines]] with the [[Seq]] type and indented elements
-     * separated by a delimiter
+     * Given an [[Iterable]] of [[Lines]]-able elements, generate [[Lines]] for each element and join them with a
+     * delimiter
      */
     def join[T](delimiter: String)(
         implicit
-        ev: S <:< Seq[T],
-        lines: ToLines[T],
-        name: Name[S]
-    ): Lines = {
-      elems match {
-        case Seq() ⇒
-          s"$name()"
-        case t ⇒
-          Lines(
-            s"$name(",
-            indent(
-              (
-                t
-                  .iterator
-                  .map(lines(_))
-                  .sliding2Opt
-                  .map {
-                    case (l, Some(_)) ⇒ l.append(delimiter)
-                    case (l, _) ⇒ l
-                  }
-                  .toSeq
-              ): _*
-            ),
-            ")"
-          )
-      }
-    }
+        ev: S <:< Iterable[T],
+        lines: ToLines[T]
+    ): Lines =
+      elems
+        .iterator
+        .map(lines(_))
+        .sliding2Opt
+        .map {
+          case (l, Some(_)) ⇒ l.append(delimiter)
+          case (l,      _ ) ⇒ l
+        }
+        .toSeq
   }
 
   implicit class AppendOps(val l: Lines) extends AnyVal {
     def append(s: String): Lines =
       l match {
-        case Empty ⇒ Empty
+        case Indent(lines) ⇒ Indent(lines.append(s))
         case Single(line) ⇒ Single(line + s)
         case Multiple(lines) ⇒
-          val last = lines.last
-          Lines(
+          if (lines.isEmpty)
+            empty
+          else {
             lines
               .dropRight(1)
               .toVector :+
-                last.copy(str = last.str + s)
-          )
+            lines
+              .last
+              .append(s)
+          }
       }
   }
 
@@ -120,35 +143,22 @@ object Lines {
    */
   implicit def toLines[T](t: T)(implicit lines: ToLines[T]): Lines = lines(t)
 
-  /**
-   * Construct a [[Lines]] from a collection of [[ToLines]]-able objects
-   */
-  implicit def iterableToLines[T](ts: Iterable[T])(implicit lines: ToLines[T]): Lines = ts.flatMap(lines(_).lines)
-
-  implicit def optionToLines[T](t: Option[T])(implicit lines: ToLines[T]): Lines = t.map(lines(_)).getOrElse(Empty)
-
-  implicit def flattenOpt(lines: Option[Lines]): Lines = lines.getOrElse(Empty)
-
-  /**
-   * Implicitly unify a collection of [[Lines]], or flatten into a collection of [[Line]]s
-   */
-  implicit def wrapLines(lines: Iterable[Lines]): Lines = lines.flatMap(_.lines)
-  implicit def unwrapLines(lines: Lines): Iterable[Line] = lines.lines.toIterable
-
-  def indent(lines: Lines*): Lines = lines.map(_.indent)
+  implicit def flattenOpt(lines: Option[Lines]): Lines = lines.getOrElse(empty)
 
   /**
    * Default [[Show]] behavior: materialize indentation-levels and join with newlines
    */
-  implicit def show(implicit indent: Indent): Show[Lines] =
+  implicit def show(implicit indent: Ind): Show[Lines] =
     Show {
-      _
-        .lines
-        .map {
-          case Line(line, level) ⇒
-            implicit val l = level
-            show"$indent$line"
-        }
+      unwrap(_)
         .mkString("\n")
     }
+}
+
+trait HasLines {
+  def indent(lines: Lines*): Lines = Lines.Indent(lines)
+
+  implicit val LineAppendOps = Lines.AppendOps _
+  implicit def LineJoinOps[T] = Lines.JoinOps[T] _
+  implicit def LineOps[T] = Lines.Ops[T] _
 }

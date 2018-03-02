@@ -1,27 +1,36 @@
 package org.hammerlab.io.lines
 
+import hammerlab.iterator._
 import hammerlab.lines._
 import hammerlab.show._
-import org.hammerlab.io.lines.Lines.Empty
+import org.hammerlab.io.Delimiter
+import org.hammerlab.io.Delimiter.comma
 import shapeless._
 
+import scala.collection.immutable.Stream.Empty
+import scala.collection.mutable
 import scala.reflect.ClassTag
 
-/**
- * Type-class for controlling the printed names of classes in generic printing below.
- *
- * Defaults to class' "simple name", from [[ClassTag]]
- */
-class Name[T](override val toString: String) extends AnyVal
+trait sealedtrait {
+  implicit def sealedtrait[T, C <: Coproduct](implicit
+                                              gen: Generic.Aux[T, C],
+                                              tLines: Lazy[ToLines[C]]): ToLines[T] =
+    ToLines { t ⇒ tLines.value(gen.to(t)) }
 
-object Name {
-  implicit def apply[T](name: String): Name[T] = new Name(name)
-  implicit def fromClassTag[T](implicit ct: ClassTag[T]): Name[T] =
-    new Name(ct.runtimeClass.getSimpleName)
+  implicit def ccons[H, T <: Coproduct](implicit
+                                        hLines: Lazy[ToLines[H]],
+                                        tLines: Lazy[ToLines[T]]): ToLines[H :+: T] =
+    ToLines {
+      case Inl(h) ⇒ hLines.value(h)
+      case Inr(t) ⇒ tLines.value(t)
+    }
+
+  implicit val cnil: ToLines[CNil] = ToLines { _ ⇒ ??? }
 }
 
-trait LowPriority
-  extends Serializable {
+trait caseclass {
+
+  val tupleRegex = """scala\.Tuple\d+""".r
 
   /**
    * Default [[ToLines]] instance for product-types, overridden by more specific instances (e.g. based on [[Show]]s)
@@ -29,16 +38,34 @@ trait LowPriority
   implicit def product[T, L <: HList](implicit
                                       gen: Generic.Aux[T, L],
                                       tLines: Lazy[ToLines[L]],
-                                      name: Name[T]): ToLines[T] =
+                                      name: Name[T],
+                                      ct: ClassTag[T]): ToLines[T] =
     ToLines {
       t ⇒
-        Lines(
-          name + "(",
-          indent(
-            tLines.value(gen.to(t))
-          ),
-          ")"
-        )
+        /* Remove name for [[scala.Tuple]]s */
+        val n =
+          ct.runtimeClass.getCanonicalName match {
+            case tupleRegex() ⇒ ""
+            case _ ⇒ name.toString
+          }
+        gen.to(t) match {
+          case l: HNil ⇒ n
+          case l ⇒
+            tLines.value(l) match {
+              case Lines(Empty) ⇒ s"$n()"
+              case Lines(line @ Line(str, level) #:: Empty) ⇒
+                Line(
+                  s"$n($str)",
+                  level
+                )
+              case lines ⇒
+                Lines(
+                  n + "(",
+                  indent(lines),
+                  ")"
+                )
+            }
+        }
     }
 
   /**
@@ -57,31 +84,48 @@ trait LowPriority
         )
     }
 
-  implicit val hnil: ToLines[HNil] = ToLines(_ ⇒ Empty)
+  implicit val hnil: ToLines[HNil] = ToLines(_ ⇒ Lines.empty)
 
-  import Lines.LineJoinOps
-
-  def showSeqTemplate[T: ToLines, U <: Seq[T] : Name]: ToLines[U] =
-    ToLines { _.join(",") }
-
-  implicit def showSeq[T: ToLines](implicit name: Name[Seq[T]]): ToLines[Seq[T]] = showSeqTemplate[T, Seq[T]]
 }
 
 trait generic
-  extends LowPriority {
+  extends sealedtrait
+    with caseclass {
 
-  implicit def vectorLines[T: ToLines](implicit name: Name[Vector[T]]): ToLines[Vector[T]] =
-    showSeqTemplate[T, Vector[T]]
+  implicit def seqLines[T, U[_] <: Iterable[_]](implicit
+                                                lines: Lazy[ToLines[T]],
+                                                ev: U[T] <:< Iterable[T],
+                                                name: Name[U[T]],
+                                                delimiter: Delimiter = comma): ToLines[U[T]] =
+    ToLines {
+        case Seq() ⇒
+          s"$name()"
+        case elems ⇒
+          implicit val l: ToLines[T] = lines.value
+          Lines(
+            s"$name(",
+            indent(
+              elems.join(delimiter)
+            ),
+            ")"
+          )
+      }
 
   implicit def arrayLines[T](implicit
-                             lines: ToLines[T],
-                             name: Name[ Array[T]]): ToLines[ Array[T]] =
-    ToLines { showSeq[T](lines, name.toString).apply(_) }
-
-  implicit def optionLines[T](implicit l: ToLines[T]): ToLines[Option[T]] =
+                             lines: Lazy[ToLines[T]],
+                             name: Name[Array[T]],
+                             delimiter: Delimiter = comma): ToLines[Array[T]] =
     ToLines {
-      case Some(t) ⇒ l(t)
-      case None ⇒ Lines()
+      arr ⇒
+        implicit val l: ToLines[T] = lines.value
+        implicit val nm: Name[mutable.ArraySeq[T]] = name.toString
+        seqLines[
+          T,
+          mutable.ArraySeq
+        ]
+        .apply(
+          mutable.ArraySeq(arr: _*)
+        )
     }
 }
 
