@@ -1,4 +1,4 @@
-package org.hammerlab.io.print
+package org.hammerlab.print
 
 import org.hammerlab.test.Suite
 

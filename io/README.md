@@ -51,7 +51,7 @@ Print collections up to a maximum number of elements:
 ```scala
 import hammerlab.show._  // will use the default Show[Int] instance
 implicit val printer = Printer(Path("out.txt"))
-implicit val samples = SampleSize(3)
+implicit val limit = Limit(3)
 print(
   1 to 10,
   "Numbers:",

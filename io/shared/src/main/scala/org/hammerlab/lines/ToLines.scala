@@ -1,8 +1,8 @@
-package org.hammerlab.io.lines
+package org.hammerlab.lines
 
 import hammerlab.iterator._
 import hammerlab.show._
-import org.hammerlab.io.lines.Lines.empty
+import org.hammerlab.lines.Lines.empty
 
 trait ToLines[-T] {
   def apply(t: T): Lines

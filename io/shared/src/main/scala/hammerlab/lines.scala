@@ -1,25 +1,52 @@
 package hammerlab
 
-import org.hammerlab.io
-import org.hammerlab.io.lines.HasLines
+import org.hammerlab.lines._
+
+trait limit {
+  import org.hammerlab.lines.{ limit ⇒ l }
+  type Limit = l.Limit
+   val Limit = l.Limit
+
+  type Limited[T] = l.Limited[T]
+   val Limited    = l.Limited
+
+  val Unlimited = l.UnLimited
+
+  type Max = l.Max
+   val Max = l.Max
+}
+
+trait delimiter
+  extends Delimiter.instances
+     with Serializable {
+  import org.hammerlab.{lines ⇒ l}
+  type Delimiter = l.Delimiter
+}
+object delimiter extends delimiter
 
 object lines
-  extends HasLines {
+  extends HasLines
+     with limit
+     with Serializable {
 
-  type Indent = io.lines.Indent
+  import org.hammerlab.{lines ⇒ l}
 
-  type Line = io.lines.Line
-   val Line = io.lines.Line
+  type Indent = l.Indent
 
-  type Lines = io.lines.Lines
-   val Lines = io.lines.Lines
+  type Line = l.Line
+   val Line = l.Line
 
-  type ToLines[T] = io.lines.ToLines[T]
-   def ToLines[T] = io.lines.ToLines[T] _
+  type Lines = l.Lines
+   val Lines = l.Lines
 
-  type Level = io.lines.Level
-   val Level = io.lines.Level
+  type ToLines[T] = l.ToLines[T]
+   def ToLines[T] = l.ToLines[T] _
 
-   trait generic extends io.lines.generic
+  type Level = l.Level
+   val Level = l.Level
+
+   trait generic extends l.generic
   object generic extends generic
+
+  object limit extends limit
 }

@@ -1,10 +1,10 @@
-package org.hammerlab.io.lines
+package org.hammerlab.lines
 
 import hammerlab.lines._
 import hammerlab.lines.generic._
 import hammerlab.show._
 import org.hammerlab.Suite
-import org.hammerlab.io.lines.GenericLinesTest._
+import org.hammerlab.lines.GenericLinesTest._
 
 class GenericLinesTest
   extends Suite {

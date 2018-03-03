@@ -1,9 +1,9 @@
-package org.hammerlab.io.lines
+package org.hammerlab.lines
 
 import hammerlab.lines._
 import hammerlab.show._
 import org.hammerlab.Suite
-import org.hammerlab.io.lines.ToLinesTest._
+import org.hammerlab.lines.ToLinesTest._
 
 class ToLinesTest
   extends Suite {

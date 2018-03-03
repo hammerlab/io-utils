@@ -1,7 +1,7 @@
-package org.hammerlab.io.lines
+package org.hammerlab.lines
 
 import hammerlab.show._
-import org.hammerlab.io.lines
+import org.hammerlab.lines
 
 sealed abstract class Indent(override val toString: String)
   extends Serializable

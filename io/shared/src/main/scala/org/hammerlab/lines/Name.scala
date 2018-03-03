@@ -1,4 +1,4 @@
-package org.hammerlab.io.lines
+package org.hammerlab.lines
 
 import scala.reflect.ClassTag
 

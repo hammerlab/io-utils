@@ -9,7 +9,8 @@ import scala.math._
 /**
  * Wrapper for representation of a number of bytes
  */
-sealed abstract class Bytes(scale: Long) {
+sealed abstract class Bytes(scale: Long)
+  extends Serializable {
   def bytes: Long = value * scale
   def value: Int
   override def toString: String =

@@ -1,6 +1,6 @@
 package hammerlab
 
-import org.hammerlab.io.lines.{ implicits, instances }
+import org.hammerlab.lines.{ implicits, instances }
 
 object indent
   extends instances {

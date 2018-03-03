@@ -1,10 +1,9 @@
-package org.hammerlab.io.lines
+package org.hammerlab.lines
 
+import hammerlab.delimiter.comma
 import hammerlab.iterator._
 import hammerlab.lines._
 import hammerlab.show._
-import org.hammerlab.io.Delimiter
-import org.hammerlab.io.Delimiter.comma
 import shapeless._
 
 import scala.collection.immutable.Stream.Empty
@@ -12,7 +11,7 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 
 trait sealedtrait {
-  implicit def sealedtrait[T, C <: Coproduct](implicit
+  implicit def traitToLines[T, C <: Coproduct](implicit
                                               gen: Generic.Aux[T, C],
                                               tLines: Lazy[ToLines[C]]): ToLines[T] =
     ToLines { t ⇒ tLines.value(gen.to(t)) }
@@ -44,7 +43,7 @@ trait caseclass {
       t ⇒
         /* Remove name for [[scala.Tuple]]s */
         val n =
-          ct.runtimeClass.getCanonicalName match {
+          ct.runtimeClass.getName match {
             case tupleRegex() ⇒ ""
             case _ ⇒ name.toString
           }
@@ -90,7 +89,7 @@ trait caseclass {
 
 trait generic
   extends sealedtrait
-    with caseclass {
+     with caseclass {
 
   implicit def seqLines[T, U[_] <: Iterable[_]](implicit
                                                 lines: Lazy[ToLines[T]],

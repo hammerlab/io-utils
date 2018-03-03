@@ -1,4 +1,4 @@
-package org.hammerlab.io.print
+package org.hammerlab.print
 
 import java.io.{ Closeable, PrintStream }
 
@@ -35,48 +35,6 @@ case class Printer(ps: PrintStream)(
         showLine
       }
     }
-
-  def limitedPrint[T: ToLines](elems: Iterable[T],
-                               populationSize: Long,
-                               header: String,
-                               truncatedHeader: Int ⇒ String)(
-      implicit
-      limit: Limit
-  ): Unit = {
-    limit match {
-      case Limit(Some(0)) ⇒
-        // No-op
-      case Limit(Some(size))
-        if size + 1 < populationSize ⇒
-        apply(
-          truncatedHeader(size),
-          indent(
-            elems.take(size),
-            "…"
-          )
-        )
-      case _ ⇒
-        apply(
-          header,
-          indent(
-            elems
-          )
-        )
-    }
-  }
-
-  def printList[T: ToLines](elems: Iterable[T],
-                            header: String,
-                            truncatedHeader: Int ⇒ String)(
-      implicit
-      limit: Limit
-  ): Unit =
-    limitedPrint(
-      elems,
-      elems.size,
-      header,
-      truncatedHeader
-    )
 
   def close(): Unit = ps.close()
 }

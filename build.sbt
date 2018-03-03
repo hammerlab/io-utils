@@ -29,7 +29,7 @@ lazy val channel = project.settings(
 )
 
 lazy val io = crossProject.settings(
-  v"4.1.0",
+  v"5.0.0",
   dep(
     case_app,
     cats,
@@ -46,16 +46,12 @@ lazy val io = crossProject.settings(
 )
 lazy val ioJS  = io.js
 lazy val ioJVM = io.jvm.settings(
-  dep(
-    paths
-  ),
-  consoleImport(
-    "hammerlab.path._"
-  )
+  dep(paths),
+  consoleImport("hammerlab.path._")
 )
 
 lazy val parallel = project.settings(
-  v"1.0.0",
+  r"1.0.0",
   publishTestJar
 ).dependsOn(
   ioJVM

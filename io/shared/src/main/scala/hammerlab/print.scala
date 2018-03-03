@@ -1,14 +1,12 @@
 package hammerlab
 
-import org.hammerlab.io
-import org.hammerlab.io.print.CanPrint
+import org.hammerlab.print.CanPrint
 
 object print extends CanPrint {
-  type Printer = io.print.Printer
-   val Printer = io.print.Printer
+  import org.hammerlab.{ print ⇒ p }
 
-  type Limit = io.print.Limit
-   val Limit = io.print.Limit
+  type Printer = p.Printer
+   val Printer = p.Printer
 
-  type CanPrint = io.print.CanPrint
+  type CanPrint = p.CanPrint
 }

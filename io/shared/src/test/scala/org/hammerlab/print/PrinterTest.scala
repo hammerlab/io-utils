@@ -1,4 +1,4 @@
-package org.hammerlab.io.print
+package org.hammerlab.print
 
 import hammerlab.lines._
 import hammerlab.show._
@@ -18,17 +18,19 @@ trait PrinterTest
   def printer: TestPrinter
 
   def check(implicit
-            printLimit: Limit,
+            limit: Limit,
             expected: String): Unit = {
     implicit val printer = this.printer
     implicit val _p = printer.printer
 
     val list = 1 to 10
 
-    print(
-      list,
-      "Integers:",
-      n ⇒ s"First $n of ${list.size} integers:"
+    echo(
+      Limited(
+        list,
+        "Integers:",
+        s"First $limit of ${list.size} integers:"
+      )
     )
 
     printer.read should be(expected.stripMargin)
@@ -36,7 +38,7 @@ trait PrinterTest
 
   test("untruncated list") {
     check(
-      Limit(None),
+      Unlimited,
       """Integers:
         |	1
         |	2

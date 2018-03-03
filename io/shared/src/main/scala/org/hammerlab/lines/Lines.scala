@@ -1,10 +1,10 @@
-package org.hammerlab.io.lines
+package org.hammerlab.lines
 
 import java.io.PrintStream
 
 import hammerlab.iterator._
 import hammerlab.show._
-import org.hammerlab.io.lines.{ Indent ⇒ Ind }
+import org.hammerlab.lines.{ Indent ⇒ Ind }
 
 /**
  * Interface for rendering objects to sequences of lines; a more structured version of [[cats.Show]], with support for
