@@ -19,7 +19,7 @@ lazy val channel = project.settings(
   v"1.4.0",
   dep(
     log4j tests,
-     math % "2.2.0",
+     math.utils % "2.2.0",
     paths,
     slf4j
   )
@@ -51,7 +51,7 @@ lazy val ioJVM = io.jvm.settings(
 )
 
 lazy val parallel = project.settings(
-  r"1.0.0",
+  v"1.0.0",
   publishTestJar
 ).dependsOn(
   ioJVM

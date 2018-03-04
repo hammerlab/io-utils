@@ -1,7 +1,5 @@
 package org.hammerlab.bytes
 
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream }
-
 import org.hammerlab.Suite
 
 class BytesTest
@@ -13,17 +11,6 @@ class BytesTest
     val size = Bytes(inputStr)
     size.toString should be(expectedStr)
     size.bytes should be(expectedBytes)
-  }
-
-  test("serde") {
-    val baos = new ByteArrayOutputStream()
-    val oos = new ObjectOutputStream(baos)
-    oos.writeObject(2.MB)
-    oos.close()
-
-    val bais = new ByteArrayInputStream(baos.toByteArray)
-    val ois = new ObjectInputStream(bais)
-    ois.readObject().asInstanceOf[Bytes] should be(2.MB)
   }
 
   test("parsing") {
