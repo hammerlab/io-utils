@@ -6,8 +6,8 @@ import java.util
 
 import grizzled.slf4j.Logging
 import hammerlab.bytes._
+import hammerlab.math.utils.ceil
 import org.hammerlab.channel.CachingChannel.Config
-import org.hammerlab.math.ceil
 
 import scala.math.{ max, min }
 
