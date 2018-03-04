@@ -1,5 +1,7 @@
 package org.hammerlab.lines
 
+import java.io.{ ByteArrayOutputStream, PrintStream }
+
 import hammerlab.lines._
 import hammerlab.show._
 import org.hammerlab.Suite
@@ -26,14 +28,53 @@ class ToLinesTest
     )
   }
 
-  test("simple") {
+  {
     import hammerlab.indent.implicits.spaces.two
-    A(123, "abc").showLines should be(
-      """123, abc
-        |  246
-        |  cba"""
-        .stripMargin
-    )
+
+    test("simple") {
+      val a = A(123, "abc")
+      val expected =
+        """123, abc
+          |  246
+          |  cba"""
+          .stripMargin
+
+      a.showLines should be(expected)
+      Some(a).showLines should be(expected)
+      (None: Option[A]).showLines should be("")
+      a.lines.showLines should be(expected)
+      a.lines.show should be(expected)
+
+      Lines.Indent(2, a.lines).show should be(
+        """    123, abc
+          |      246
+          |      cba"""
+          .stripMargin
+      )
+    }
+
+    test("print") {
+      val baos = new ByteArrayOutputStream()
+      implicit val ps = new PrintStream(baos)
+      printlns(
+        true,
+        Some(Seq("abc", "def")),
+        Lines("aaa")
+      )
+      ps.close()
+      new String(baos.toByteArray) should be(
+        """true
+          |abc
+          |def
+          |aaa
+          |""".stripMargin
+      )
+    }
+
+    test("append") {
+      indent("abc").append(",").showLines should be("  abc,")
+      Lines(Seq[String]()).append(",").showLines should be("")
+    }
   }
 }
 

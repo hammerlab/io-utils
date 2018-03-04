@@ -6,13 +6,6 @@ import org.hammerlab.lines
 sealed abstract class Indent(override val toString: String)
   extends Serializable
 
-object Indent {
-  implicit def show(implicit level: Level): Show[Indent] =
-    Show {
-      _.toString * level
-    }
-}
-
 case object tab extends Indent("\t")
 
 trait instances {

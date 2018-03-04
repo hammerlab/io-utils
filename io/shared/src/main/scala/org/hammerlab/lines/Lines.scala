@@ -13,14 +13,7 @@ import org.hammerlab.lines.{ Indent ⇒ Ind }
  * [[Lines]] can be implicitly created from a single [[String]], a group of [[Lines]]s, or by application of a
  * [[ToLines]] instance.
  */
-sealed trait Lines extends Any {
-  /*
-   * these methods are provided for all types via [[Lines.Ops]], but are denormalized here because that "ops" pattern
-   * doesn't work on [[Any]]s
-   */
-  def showLines(implicit indent: Ind): String = Lines.show.apply(this)
-  def show(implicit indent: Ind): String = Lines.show.apply(this)
-}
+sealed trait Lines extends Any
 
 object Lines {
 
@@ -85,9 +78,6 @@ object Lines {
   implicit def unwrap(lines: Lines)(implicit i: Ind): Iterator[String] =
     unrollIndents(lines).map { toShow(_).show }
 
-  def printlns(lines: Lines*)(implicit i: Ind, ps: PrintStream = System.out): Unit =
-    ps.println(Lines(lines).showLines)
-
   implicit class Ops[T](val t: T) extends AnyVal {
     /* convert an object to [[Lines]] and newline-join them to a [[String]] */
     def showLines(implicit
@@ -143,8 +133,6 @@ object Lines {
    */
   implicit def toLines[T](t: T)(implicit lines: ToLines[T]): Lines = lines(t)
 
-  implicit def flattenOpt(lines: Option[Lines]): Lines = lines.getOrElse(empty)
-
   /**
    * Default [[Show]] behavior: materialize indentation-levels and join with newlines
    */
@@ -157,6 +145,9 @@ object Lines {
 
 trait HasLines {
   def indent(lines: Lines*): Lines = Lines.Indent(lines)
+
+  def printlns(lines: Lines*)(implicit i: Ind, ps: PrintStream = System.out): Unit =
+    ps.println(Lines(lines).showLines)
 
   implicit val LineAppendOps = Lines.AppendOps _
   implicit def LineJoinOps[T] = Lines.JoinOps[T] _

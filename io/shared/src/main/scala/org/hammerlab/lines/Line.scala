@@ -7,7 +7,6 @@ case class Line(str: String, level: Level = 0) {
 }
 
 object Line {
-  implicit def wrap(s: String): Line = Line(s)
   implicit def show(implicit i: Indent): Show[Line] =
     Show {
       case Line(str, level) ⇒

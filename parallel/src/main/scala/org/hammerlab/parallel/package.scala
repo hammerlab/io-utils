@@ -56,10 +56,4 @@ package object parallel {
       config: Config
   ): Parallelizer[T] =
     config.make[T, Input](input)
-
-  def defaultNumThreads: Int =
-    getRuntime.availableProcessors * 4
-
-  def Threads(numThreads: Int = defaultNumThreads) =
-    threads.Config(numThreads)
 }

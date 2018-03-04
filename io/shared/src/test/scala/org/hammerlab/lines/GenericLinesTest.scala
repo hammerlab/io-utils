@@ -5,6 +5,7 @@ import hammerlab.lines.generic._
 import hammerlab.show._
 import org.hammerlab.Suite
 import org.hammerlab.lines.GenericLinesTest._
+import shapeless.{ CNil, Generic, HNil }
 
 class GenericLinesTest
   extends Suite {
@@ -113,6 +114,9 @@ class GenericLinesTest
         |)"""
         .stripMargin
     )
+
+    E().showLines should be("E")
+    F.showLines should be("F")
   }
 
   test("sealed trait") {
@@ -169,6 +173,11 @@ class GenericLinesTest
         .stripMargin
     )
   }
+
+  test("seqs") {
+    Nil.showLines should be("Nil")
+    Seq[Int]().showLines should be("Seq()")
+  }
 }
 
 object GenericLinesTest {
@@ -178,4 +187,6 @@ object GenericLinesTest {
   case class B(values: Vector[Double], d: Double) extends A
   case class C(bs: Seq[B]) extends A
   case class D(c: Option[C])
+  case class E()
+  case object F
 }

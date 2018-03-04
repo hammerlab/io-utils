@@ -36,7 +36,7 @@ trait PrinterTest
     printer.read should be(expected.stripMargin)
   }
 
-  test("untruncated list") {
+  test("unlimited") {
     check(
       Unlimited,
       """Integers:

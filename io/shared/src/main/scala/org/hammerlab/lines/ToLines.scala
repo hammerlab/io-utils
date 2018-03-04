@@ -31,9 +31,6 @@ object ToLines
   implicit def arrayToLines[T](implicit lines: ToLines[T]): ToLines[Array[T]] =
     ToLines { _.map(lines(_)) }
 
-  /**
-   * Construct a [[Lines]] from a collection of [[ToLines]]-able objects
-   */
   implicit def optionToLines[T](implicit lines: ToLines[T]): ToLines[Option[T]] =
     ToLines {
       _

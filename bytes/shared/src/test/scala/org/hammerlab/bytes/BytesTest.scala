@@ -1,5 +1,6 @@
 package org.hammerlab.bytes
 
+import caseapp.core.argparser.ArgParser
 import org.hammerlab.Suite
 
 class BytesTest
@@ -52,6 +53,8 @@ class BytesTest
     intercept[BadBytesString] {Bytes("1fb") }
     intercept[BadBytesString] {Bytes("gb") }
     intercept[BadBytesString] {Bytes("gb") }
+
+    ArgParser[Bytes].apply(None, "2mb") should be(Right(2.MB))
   }
 
   test("format") {
