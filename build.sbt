@@ -50,18 +50,10 @@ lazy val ioJVM = io.jvm.settings(
   consoleImport("hammerlab.path._")
 )
 
-lazy val parallel = project.settings(
-  v"1.0.0",
-  publishTestJar
-).dependsOn(
-  ioJVM
-)
-
-lazy val io_utils =
+lazy val `io-utils` =
   rootProject(
     "io-utils",
     channel,
-    parallel,
     bytesJVM, bytesJS,
        ioJVM,    ioJS
   )
