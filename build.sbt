@@ -3,7 +3,7 @@ default(
   versions(
     paths → "1.5.0"
   ),
-  sonatypeStage(1457)
+  sonatypeStage(1457)  // staging repository for org.hammerlab.test:{base,suite}:1.0.1
 )
 
 lazy val bytes = crossProject.settings(
