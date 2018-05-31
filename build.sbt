@@ -2,7 +2,8 @@
 default(
   versions(
     paths → "1.5.0"
-  )
+  ),
+  sonatypeStage(1457)
 )
 
 lazy val bytes = crossProject.settings(
@@ -29,7 +30,7 @@ lazy val channel = project.settings(
 )
 
 lazy val io = crossProject.settings(
-  v"5.0.0",
+  v"5.0.1",
   dep(
     case_app,
     cats,
@@ -41,7 +42,7 @@ lazy val io = crossProject.settings(
     "hammerlab.lines._",
     "hammerlab.print._",
     "hammerlab.show._",
-    "hammerlab.indent.implicits.tab"
+    "hammerlab.indent.tab"
   )
 )
 lazy val ioJS  = io.js

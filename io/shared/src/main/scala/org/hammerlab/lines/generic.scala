@@ -10,21 +10,29 @@ import scala.collection.immutable.Stream.Empty
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
+/**
+ * Derive [[ToLines]] for a sum-type in terms of its summands
+ *
+ * This is exported by default in [[hammerlab.lines]] because its relatively uncontroversial.
+ *
+ * The corresponding derivation for product-types, [[caseclass]], is exported separately (as
+ * [[hammerlab.lines.caseclass]]) because it has to make more subjective decisions about how to format classes.
+ */
 trait sealedtrait {
   implicit def traitToLines[T, C <: Coproduct](implicit
-                                              gen: Generic.Aux[T, C],
-                                              tLines: Lazy[ToLines[C]]): ToLines[T] =
+                                               gen: Generic.Aux[T, C],
+                                               tLines: Lazy[ToLines[C]]): ToLines[T] =
     ToLines { t ⇒ tLines.value(gen.to(t)) }
 
-  implicit def ccons[H, T <: Coproduct](implicit
-                                        hLines: Lazy[ToLines[H]],
-                                        tLines: Lazy[ToLines[T]]): ToLines[H :+: T] =
+  implicit def cconsToLines[H, T <: Coproduct](implicit
+                                               hLines: Lazy[ToLines[H]],
+                                               tLines: Lazy[ToLines[T]]): ToLines[H :+: T] =
     ToLines {
       case Inl(h) ⇒ hLines.value(h)
       case Inr(t) ⇒ tLines.value(t)
     }
 
-  implicit val cnil: ToLines[CNil] = ToLines { _ ⇒ ??? }
+  implicit val cnilToLines: ToLines[CNil] = ToLines { _ ⇒ ??? }
 }
 
 trait caseclass {

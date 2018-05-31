@@ -10,7 +10,7 @@ import org.hammerlab.lines.ToLinesTest._
 class ToLinesTest
   extends Suite {
   test("nested indents") {
-    import hammerlab.indent.implicits.tab
+    import hammerlab.indent.tab
     Foos(
       111,
       Foos(
@@ -29,7 +29,7 @@ class ToLinesTest
   }
 
   {
-    import hammerlab.indent.implicits.spaces.two
+    import hammerlab.indent.spaces
 
     test("simple") {
       val a = A(123, "abc")
@@ -41,6 +41,7 @@ class ToLinesTest
 
       a.showLines should be(expected)
       Some(a).showLines should be(expected)
+      (Some(a): Option[A]).showLines should be(expected)
       (None: Option[A]).showLines should be("")
       a.lines.showLines should be(expected)
       a.lines.show should be(expected)

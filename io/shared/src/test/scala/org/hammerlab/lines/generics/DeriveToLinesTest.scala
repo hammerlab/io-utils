@@ -1,17 +1,19 @@
-package org.hammerlab.lines
+package org.hammerlab.lines.generics
 
+import hammerlab.Suite
+import hammerlab.indent.spaces
 import hammerlab.lines._
-import hammerlab.lines.generic._
 import hammerlab.show._
-import org.hammerlab.Suite
-import org.hammerlab.lines.GenericLinesTest._
-import shapeless.{ CNil, Generic, HNil }
+import org.hammerlab.lines.Name
+import org.hammerlab.lines.generics.DeriveToLinesTest._
 
-class GenericLinesTest
+class DeriveToLinesTest
   extends Suite {
 
+  import hammerlab.lines.generic._
+
   test("generic") {
-    import hammerlab.indent.implicits.spaces.four
+    implicit val spaces = hammerlab.indent.spaces.`4`
     Pair(111, "aaa").showLines should be(
       """Pair(
         |    111,
@@ -20,10 +22,6 @@ class GenericLinesTest
         .stripMargin
     )
   }
-
-  implicit val showDouble: Show[Double] = Show { "%.1f".format(_) }
-
-  import hammerlab.indent.implicits.spaces.two
 
   test("options") {
     None.showLines should be("None")
@@ -180,13 +178,18 @@ class GenericLinesTest
   }
 }
 
-object GenericLinesTest {
+
+
+object DeriveToLinesTest {
+
   case class Pair(n: Int, s: String)
 
   sealed trait A extends Product with Serializable
-  case class B(values: Vector[Double], d: Double) extends A
-  case class C(bs: Seq[B]) extends A
-  case class D(c: Option[C])
-  case class E()
-  case object F
+   case  class B(values: Vector[Double], d: Double) extends A
+   case  class C(bs: Seq[B]) extends A
+   case  class D(c: Option[C])
+   case  class E()
+   case object F
+
+  implicit val showDouble: Show[Double] = Show { "%.1f".format(_) }
 }

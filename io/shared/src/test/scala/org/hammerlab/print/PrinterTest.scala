@@ -8,7 +8,7 @@ trait PrinterTest
   extends Suite
     with CanPrint {
 
-  implicit val tab = hammerlab.indent.implicits.tab
+  implicit val tab = hammerlab.indent.tab
 
   trait TestPrinter {
     def printer: Printer
