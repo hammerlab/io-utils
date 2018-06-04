@@ -14,7 +14,8 @@ class DeriveToLinesTest
 
   test("generic") {
     implicit val spaces = hammerlab.indent.spaces.`4`
-    Pair(111, "aaa").showLines should be(
+    ==(
+      Pair(111, "aaa").showLines,
       """Pair(
         |    111,
         |    aaa
@@ -24,14 +25,15 @@ class DeriveToLinesTest
   }
 
   test("options") {
-    None.showLines should be("None")
-    (None: Option[Int]).showLines should be("None")
-    Some(2).showLines should be("Some(2)")
-    Some("abc").showLines should be("Some(abc)")
+    ==(None.showLines, "None")
+    ==((None: Option[Int]).showLines, "None")
+    ==(Some(2).showLines, "Some(2)")
+    ==(Some("abc").showLines, "Some(abc)")
   }
 
   test("tuples") {
-    (1, 2).showLines should be(
+    ==(
+      (1, 2).showLines,
       """(
         |  1,
         |  2
@@ -39,7 +41,8 @@ class DeriveToLinesTest
       .stripMargin
     )
 
-    (1, "abc").showLines should be(
+    ==(
+      (1, "abc").showLines,
       """(
         |  1,
         |  abc
@@ -47,7 +50,8 @@ class DeriveToLinesTest
         .stripMargin
     )
 
-    (1, "abc", true).showLines should be(
+    ==(
+      (1, "abc", true).showLines,
       """(
         |  1,
         |  abc,
@@ -66,7 +70,8 @@ class DeriveToLinesTest
     )
 
   test("nested case classes") {
-    c.showLines should be(
+    ==(
+      c.showLines,
       """C(
         |  Seq(
         |    B(
@@ -87,8 +92,9 @@ class DeriveToLinesTest
         .stripMargin
     )
 
-    D(None).showLines should be("D(None)")
-    D(Some(c)).showLines should be(
+    ==(D(None).showLines, "D(None)")
+    ==(
+      D(Some(c)).showLines,
       """D(
         |  Some(
         |    C(
@@ -113,16 +119,17 @@ class DeriveToLinesTest
         .stripMargin
     )
 
-    E().showLines should be("E")
-    F.showLines should be("F")
+    ==(E().showLines, "E")
+    ==(F.showLines, "F")
   }
 
   test("sealed trait") {
-    List(
-      B(Vector(777, 888), 999),
-      c
-    )
-    .showLines should be(
+    ==(
+      List(
+        B(Vector(777, 888), 999),
+        c
+      )
+      .showLines,
       """List(
         |  B(
         |    Vector(
@@ -154,7 +161,8 @@ class DeriveToLinesTest
 
   test("custom names") {
     implicit def seqName[T]: Name[Seq[T]] = "seq"
-    Seq(1, 2).showLines should be(
+    ==(
+      Seq(1, 2).showLines,
       """seq(
         |  1,
         |  2
@@ -163,7 +171,8 @@ class DeriveToLinesTest
     )
 
     implicit def arrName[T]: Name[Array[T]] = "arr"
-    Array(1, 2).showLines should be(
+    ==(
+      Array(1, 2).showLines,
       """arr(
         |  1,
         |  2
@@ -173,8 +182,8 @@ class DeriveToLinesTest
   }
 
   test("seqs") {
-    Nil.showLines should be("Nil")
-    Seq[Int]().showLines should be("Seq()")
+    ==(Nil.showLines, "Nil")
+    ==(Seq[Int]().showLines, "Seq()")
   }
 }
 

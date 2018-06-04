@@ -3,7 +3,10 @@ default(
   versions(
     paths → "1.5.0"
   ),
-  sonatypeStage(1457)  // staging repository for org.hammerlab.test:{base,suite}:1.0.1
+  sonatypeStage(
+    1464,  // tests 1.0.1
+    1465   // shapeless-utils 1.3.0
+  )
 )
 
 lazy val bytes = crossProject.settings(
@@ -13,29 +16,30 @@ lazy val bytes = crossProject.settings(
     cats
   )
 )
-lazy val bytesJS  = bytes.js
-lazy val bytesJVM = bytes.jvm
+lazy val `bytes.js`  = bytes.js
+lazy val `bytes.jvm` = bytes.jvm
+lazy val `bytes-x`   = parent(`bytes.js`, `bytes.jvm`)
 
 lazy val channel = project.settings(
-  v"1.4.0",
+  v"1.5.0",
   dep(
     log4j tests,
-     math.utils % "2.2.0",
+    math.utils % "2.2.0",
     paths,
     slf4j
   )
 ).dependsOn(
-  bytesJVM,
-     ioJVM
+  `bytes.jvm`,
+     `io.jvm`
 )
 
 lazy val io = crossProject.settings(
-  v"5.0.1",
+  v"5.1.0",
   dep(
     case_app,
     cats,
     iterators       % "2.1.0",
-    shapeless_utils % "1.2.0",
+    shapeless_utils % "1.3.0",
     types           % "1.1.0"
   ),
   consoleImport(
@@ -45,16 +49,16 @@ lazy val io = crossProject.settings(
     "hammerlab.indent.tab"
   )
 )
-lazy val ioJS  = io.js
-lazy val ioJVM = io.jvm.settings(
+lazy val `io.js`  = io.js
+lazy val `io.jvm` = io.jvm.settings(
   dep(paths),
   consoleImport("hammerlab.path._")
 )
+lazy val `io-x` = parent(`io.js`, `io.jvm`)
 
 lazy val `io-utils` =
-  rootProject(
-    "io-utils",
+  root(
     channel,
-    bytesJVM, bytesJS,
-       ioJVM,    ioJS
+    `bytes-x`,
+    `io-x`
   )

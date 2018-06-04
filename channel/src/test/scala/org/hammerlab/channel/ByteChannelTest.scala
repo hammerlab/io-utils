@@ -79,27 +79,27 @@ class ByteChannelTest
     val b4 = Buffer(4)
 
     ch.readFully(b4)
-    b4.array.map(_.toChar).mkString("") should be("1234")
-    ch.position() should be(4)
+    ==(b4.array.map(_.toChar).mkString(""), "1234")
+    ==(ch.position(), 4)
 
     b4.position(0)
     ch.readFully(b4)
-    b4.array.map(_.toChar).mkString("") should be("5678")
-    ch.position() should be(8)
+    ==(b4.array.map(_.toChar).mkString(""), "5678")
+    ==(ch.position(), 8)
 
     b4.position(0)
     ch.readFully(b4)
-    b4.array.map(_.toChar).mkString("") should be("9012")
-    ch.position() should be(12)
+    ==(b4.array.map(_.toChar).mkString(""), "9012")
+    ==(ch.position(), 12)
 
     b4.position(0)
     intercept[EOFException] {
       ch.readFully(b4)
     }
 
-    ch.isOpen should be(true)
+    ==(ch.isOpen, true)
     ch.close()
-    ch.isOpen should be(false)
+    ==(ch.isOpen, false)
   }
 
   test("incomplete consecutive empty reads") {
@@ -117,18 +117,21 @@ class ByteChannelTest
     val a4 = fill(4)(0.toByte)
 
     ch.readFully(b4)
-    b4.array.map(_.toChar).mkString("") should be("1234")
-    ch.position() should be(4)
+    ==(b4.array.map(_.toChar).mkString(""), "1234")
+    ==(ch.position(), 4)
 
     ch.readFully(a4)
-    a4.map(_.toChar).mkString("") should be("5678")
-    ch.position() should be(8)
+    ==(a4.map(_.toChar).mkString(""), "5678")
+    ==(ch.position(), 8)
 
     b4.position(0)
-    intercept[IOException] {
-      ch.readFully(b4)
-    }
-    .getMessage should be("Read 0 bytes twice in a row, 3 bytes into reading 4 from position 8")
+    ==(
+      intercept[IOException] {
+        ch.readFully(b4)
+      }
+      .getMessage,
+      "Read 0 bytes twice in a row, 3 bytes into reading 4 from position 8"
+    )
   }
 
   test("read single bytes") {
@@ -141,59 +144,59 @@ class ByteChannelTest
         "234"
       )
 
-    ch.position() should be(0)
-    ch.read().toChar should be('1')
-    ch.position() should be(1)
-    ch.read().toChar should be('2')
-    ch.position() should be(2)
-    ch.read().toChar should be('3')
-    ch.position() should be(3)
+    ==(ch.position(), 0)
+    ==(ch.read().toChar, '1')
+    ==(ch.position(), 1)
+    ==(ch.read().toChar, '2')
+    ==(ch.position(), 2)
+    ==(ch.read().toChar, '3')
+    ==(ch.position(), 3)
   }
 
   def check(ch: ByteChannel): Unit = {
-    ch.position should be(0)
+    ==(ch.position, 0)
 
-    ch.readString(4, includesNull = false) should be("0123")
-    ch.position should be(4)
+    ==(ch.readString(4, includesNull = false), "0123")
+    ==(ch.position, 4)
 
-    ch.read.toChar should be('4')
-    ch.position should be(5)
+    ==(ch.read.toChar, '4')
+    ==(ch.position, 5)
 
     val bytes = fill(6)(0.toByte)
-    ch.read(bytes) should be(6)
-    bytes.map(_.toChar).mkString("") should be("56789\n")
-    ch.position should be(11)
+    ==(ch.read(bytes), 6)
+    ==(bytes.map(_.toChar).mkString(""), "56789\n")
+    ==(ch.position, 11)
 
-    ch.read.toChar should be('a')
-    ch.position should be(12)
+    ==(ch.read.toChar, 'a')
+    ==(ch.position, 12)
 
     val buf = Buffer(7)
-    ch.read(buf) should be(7)
-    buf.array().map(_.toChar).mkString("") should be("bcdefgh")
-    ch.position should be(19)
+    ==(ch.read(buf), 7)
+    ==(buf.array().map(_.toChar).mkString(""), "bcdefgh")
+    ==(ch.position, 19)
 
     ch.skip(250)
-    ch.position should be(269)
+    ==(ch.position, 269)
 
     ch.read(bytes, 1, 2)
-    bytes.slice(1, 3).map(_.toChar).mkString("") should be("QR")
-    ch.position should be(271)
+    ==(bytes.slice(1, 3).map(_.toChar).mkString(""), "QR")
+    ==(ch.position, 271)
 
     buf.clear()
-    ch.read(buf) should be(7)
-    buf.array().slice(0, 7).map(_.toChar).mkString("") should be("RSSTTUU")
-    ch.position should be(278)
+    ==(ch.read(buf), 7)
+    ==(buf.array().slice(0, 7).map(_.toChar).mkString(""), "RSSTTUU")
+    ==(ch.position, 278)
 
     ch.skip(169)
-    ch.position should be(447)
+    ==(ch.position, 447)
 
-    ch.read should be(-1)
-    ch.read(bytes) should be(-1)
+    ==(ch.read, -1)
+    ==(ch.read(bytes), -1)
     buf.clear
     buf.limit(0)
-    ch.read(buf) should be(0)
+    ==(ch.read(buf), 0)
     buf.clear()
-    ch.read(buf) should be(-1)
+    ==(ch.read(buf), -1)
   }
 
   test("InputStreamByteChannel") {
@@ -216,7 +219,7 @@ class ByteChannelTest
     val ch: SeekableByteChannel = FileChannel.open(path)
     val bytes = fill(4)(0.toByte)
     ch.read(bytes)
-    ch.position() should be(4)
+    ==(ch.position(), 4)
   }
 
   test("CachingChannel") {
@@ -232,15 +235,15 @@ class ByteChannelTest
       cc.seek(i)
 
       withClue(s"idx: $i: ") {
-        cc.getInt should be(ch.getInt)
+        ==(cc.getInt, ch.getInt)
       }
 
       ch.seek(i)
       cc.seek(i)
 
       withClue(s"idx: $i: ") {
-        cc.read() should be(expectedByte)
-        ch.read() should be(expectedByte)
+        ==(cc.read(), expectedByte)
+        ==(ch.read(), expectedByte)
       }
     }
   }

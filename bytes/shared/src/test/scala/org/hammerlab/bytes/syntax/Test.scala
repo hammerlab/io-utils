@@ -10,12 +10,12 @@ class Test
   extends Suite {
   test("syntax") {
     import hammerlab.bytes._
-    32.B  should be( B(32))
-    32.KB should be(KB(32))
-    32.MB should be(MB(32))
-    32.GB should be(GB(32))
-    32.TB should be(TB(32))
-    32.PB should be(PB(32))
-    32.EB should be(EB(32))
+    ===(32.B ,  B(32))
+    ===(32.KB, KB(32))
+    ===(32.MB, MB(32))
+    ===(32.GB, GB(32))
+    ===(32.TB, TB(32))
+    ===(32.PB, PB(32))
+    ===(32.EB, EB(32))
   }
 }

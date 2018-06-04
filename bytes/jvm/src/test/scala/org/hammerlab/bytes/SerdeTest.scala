@@ -14,6 +14,6 @@ class SerdeTest
 
     val bais = new ByteArrayInputStream(baos.toByteArray)
     val ois = new ObjectInputStream(bais)
-    ois.readObject().asInstanceOf[Bytes] should be(2.MB)
+    ==(ois.readObject().asInstanceOf[Bytes], 2.MB)
   }
 }

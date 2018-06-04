@@ -19,32 +19,32 @@ class ShowTest
   test("generic") {
     val bar = Bar(111, "aaa")
 
-    bar.show should be("Bar(111,aaa)")
+    ==(bar.show, "Bar(111,aaa)")
 
     val baz = Baz(true)
 
-    baz.show should be("Baz(true)")
+    ==(baz.show, "Baz(true)")
 
-    (bar: Foo).show should be("Bar(111,aaa)")
+    ==((bar: Foo).show, "Bar(111,aaa)")
 
     val qux = Qux()
 
-    qux.show should be("Qux")
+    ==(qux.show, "Qux")
 
     // This is "ZZZ$" on the JVM and "ZZZ" in JS
     val zzz = ZZZ.getClass.getSimpleName
 
-    ZZZ.show should be(zzz)
+    ==(ZZZ.show, zzz)
 
     val foos: Seq[Foo] = List(bar, baz, qux, ZZZ)
 
-    foos.map(_.show).mkString(" ") should be(s"Bar(111,aaa) Baz(true) Qux $zzz")
+    ==(foos.map(_.show).mkString(" "), s"Bar(111,aaa) Baz(true) Qux $zzz")
 
-    Anon(123, "abc").show should be("Anon(123,abc)")
+    ==(Anon(123, "abc").show, "Anon(123,abc)")
   }
 
   test("syntax") {
     /** Show.apply alias for [[cats.Show.show]] */
-    showInt(4) should be("4")
+    ==(showInt(4), "4")
   }
 }

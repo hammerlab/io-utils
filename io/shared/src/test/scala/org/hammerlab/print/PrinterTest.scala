@@ -33,7 +33,7 @@ trait PrinterTest
       )
     )
 
-    printer.read should be(expected.stripMargin)
+    ==(printer.read, expected.stripMargin)
   }
 
   test("unlimited") {
@@ -153,7 +153,8 @@ trait PrinterTest
       )
     )
 
-    printer.read should be(
+    ==(
+      printer.read,
       """aaa
         |bbb
         |	ccc

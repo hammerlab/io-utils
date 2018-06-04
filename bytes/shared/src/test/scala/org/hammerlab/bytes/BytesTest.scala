@@ -10,8 +10,8 @@ class BytesTest
             expectedStr: String,
             expectedBytes: Long): Unit = {
     val size = Bytes(inputStr)
-    size.toString should be(expectedStr)
-    size.bytes should be(expectedBytes)
+    ==(size.toString, expectedStr)
+    ==(size.bytes, expectedBytes)
   }
 
   test("parsing") {
@@ -54,13 +54,13 @@ class BytesTest
     intercept[BadBytesString] {Bytes("gb") }
     intercept[BadBytesString] {Bytes("gb") }
 
-    ArgParser[Bytes].apply(None, "2mb") should be(Right(2.MB))
+    ==(ArgParser[Bytes].apply(None, "2mb"), Right(2.MB))
   }
 
   test("format") {
 
     def check(n: Long, expected: String): Unit = {
-      Bytes.format(n) should be(expected)
+      ==(Bytes.format(n), expected)
     }
 
     check(   0,    "0")
@@ -175,12 +175,12 @@ class BytesTest
     check((  1L << 60) +   0,    "1E")
     check((  1L << 60) +   1,  "1.0E")
 
-    Bytes.format(10.KB) should be("10K")
-    Bytes.format(10.KB, includeB = true) should be("10KB")
+    ==(Bytes.format(10.KB), "10K")
+    ==(Bytes.format(10.KB, includeB = true), "10KB")
 
     import cats.syntax.show._
     import hammerlab.bytes.format._
-    10.KB.show should be("10K")
-    10240L.show should be("10K")
+    ===(10.KB.show, "10K")
+    ===(10240L.show, "10K")
   }
 }

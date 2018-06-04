@@ -24,7 +24,7 @@ class GenericCustomTest
 
   test("custom lines from companion vs auto-derived") {
     {
-      (l: Trait).showLines should be(custom)
+      ==((l: Trait).showLines, custom)
 
       {
         import hammerlab.lines.generic._
@@ -33,15 +33,15 @@ class GenericCustomTest
          * with full generic derivations in scope, [[caseclass]] takes precedence over
          * [[Child1.lines types' companions]]
          */
-         l        .showLines should be(generic)
-        (l: Trait).showLines should be(generic)
+        ===( l        .showLines, generic)
+        ===((l: Trait).showLines, generic)
       }
 
       {
         import hammerlab.lines.generic._
         import Child1.lines  // overrides auto-derived ToLines from generic above
 
-        l.showLines should be(custom)
+        ===(l.showLines, custom)
       }
     }
   }
