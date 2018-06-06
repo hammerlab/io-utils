@@ -6,7 +6,7 @@ default(
 )
 
 lazy val bytes = crossProject.settings(
-  v"1.2.1",
+  r"1.2.0",
   dep(
     case_app,
     cats
