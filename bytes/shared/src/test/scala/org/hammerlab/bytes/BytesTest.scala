@@ -183,4 +183,21 @@ class BytesTest
     ===(10.KB.show, "10K")
     ===(10240L.show, "10K")
   }
+
+  test("scaled ctor") {
+    ==(Bytes(1L <<  0, 123), 123  B)
+    ==(Bytes(1L << 10, 123), 123 KB)
+    ==(Bytes(1L << 20, 123), 123 MB)
+    ==(Bytes(1L << 30, 123), 123 GB)
+    ==(Bytes(1L << 40, 123), 123 TB)
+    ==(Bytes(1L << 50, 123), 123 PB)
+    ==(Bytes(1L << 60, 123), 123 EB)
+  }
+
+  test("implicit unwrap") {
+    ==(
+      B(123456) * 10,
+      B(1234560)
+    )
+  }
 }

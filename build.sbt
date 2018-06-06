@@ -2,15 +2,11 @@
 default(
   versions(
     paths → "1.5.0"
-  ),
-  sonatypeStage(
-    1464,  // tests 1.0.1
-    1465   // shapeless-utils 1.3.0
   )
 )
 
 lazy val bytes = crossProject.settings(
-  v"1.2.0",
+  v"1.2.1",
   dep(
     case_app,
     cats
