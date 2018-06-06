@@ -1,18 +1,21 @@
-package org.hammerlab.lines
+package org.hammerlab.lines.generics
 
+import hammerlab.Suite
+import hammerlab.indent.spaces
 import hammerlab.lines._
-import hammerlab.lines.generic._
 import hammerlab.show._
-import org.hammerlab.Suite
-import org.hammerlab.lines.GenericLinesTest._
-import shapeless.{ CNil, Generic, HNil }
+import org.hammerlab.lines.Name
+import org.hammerlab.lines.generics.DeriveToLinesTest._
 
-class GenericLinesTest
+class DeriveToLinesTest
   extends Suite {
 
+  import hammerlab.lines.generic._
+
   test("generic") {
-    import hammerlab.indent.implicits.spaces.four
-    Pair(111, "aaa").showLines should be(
+    implicit val spaces = hammerlab.indent.spaces.`4`
+    ==(
+      Pair(111, "aaa").showLines,
       """Pair(
         |    111,
         |    aaa
@@ -21,19 +24,16 @@ class GenericLinesTest
     )
   }
 
-  implicit val showDouble: Show[Double] = Show { "%.1f".format(_) }
-
-  import hammerlab.indent.implicits.spaces.two
-
   test("options") {
-    None.showLines should be("None")
-    (None: Option[Int]).showLines should be("None")
-    Some(2).showLines should be("Some(2)")
-    Some("abc").showLines should be("Some(abc)")
+    ==(None.showLines, "None")
+    ==((None: Option[Int]).showLines, "None")
+    ==(Some(2).showLines, "Some(2)")
+    ==(Some("abc").showLines, "Some(abc)")
   }
 
   test("tuples") {
-    (1, 2).showLines should be(
+    ==(
+      (1, 2).showLines,
       """(
         |  1,
         |  2
@@ -41,7 +41,8 @@ class GenericLinesTest
       .stripMargin
     )
 
-    (1, "abc").showLines should be(
+    ==(
+      (1, "abc").showLines,
       """(
         |  1,
         |  abc
@@ -49,7 +50,8 @@ class GenericLinesTest
         .stripMargin
     )
 
-    (1, "abc", true).showLines should be(
+    ==(
+      (1, "abc", true).showLines,
       """(
         |  1,
         |  abc,
@@ -68,7 +70,8 @@ class GenericLinesTest
     )
 
   test("nested case classes") {
-    c.showLines should be(
+    ==(
+      c.showLines,
       """C(
         |  Seq(
         |    B(
@@ -89,8 +92,9 @@ class GenericLinesTest
         .stripMargin
     )
 
-    D(None).showLines should be("D(None)")
-    D(Some(c)).showLines should be(
+    ==(D(None).showLines, "D(None)")
+    ==(
+      D(Some(c)).showLines,
       """D(
         |  Some(
         |    C(
@@ -115,16 +119,17 @@ class GenericLinesTest
         .stripMargin
     )
 
-    E().showLines should be("E")
-    F.showLines should be("F")
+    ==(E().showLines, "E")
+    ==(F.showLines, "F")
   }
 
   test("sealed trait") {
-    List(
-      B(Vector(777, 888), 999),
-      c
-    )
-    .showLines should be(
+    ==(
+      List(
+        B(Vector(777, 888), 999),
+        c
+      )
+      .showLines,
       """List(
         |  B(
         |    Vector(
@@ -156,7 +161,8 @@ class GenericLinesTest
 
   test("custom names") {
     implicit def seqName[T]: Name[Seq[T]] = "seq"
-    Seq(1, 2).showLines should be(
+    ==(
+      Seq(1, 2).showLines,
       """seq(
         |  1,
         |  2
@@ -165,7 +171,8 @@ class GenericLinesTest
     )
 
     implicit def arrName[T]: Name[Array[T]] = "arr"
-    Array(1, 2).showLines should be(
+    ==(
+      Array(1, 2).showLines,
       """arr(
         |  1,
         |  2
@@ -175,18 +182,23 @@ class GenericLinesTest
   }
 
   test("seqs") {
-    Nil.showLines should be("Nil")
-    Seq[Int]().showLines should be("Seq()")
+    ==(Nil.showLines, "Nil")
+    ==(Seq[Int]().showLines, "Seq()")
   }
 }
 
-object GenericLinesTest {
+
+
+object DeriveToLinesTest {
+
   case class Pair(n: Int, s: String)
 
   sealed trait A extends Product with Serializable
-  case class B(values: Vector[Double], d: Double) extends A
-  case class C(bs: Seq[B]) extends A
-  case class D(c: Option[C])
-  case class E()
-  case object F
+   case  class B(values: Vector[Double], d: Double) extends A
+   case  class C(bs: Seq[B]) extends A
+   case  class D(c: Option[C])
+   case  class E()
+   case object F
+
+  implicit val showDouble: Show[Double] = Show { "%.1f".format(_) }
 }

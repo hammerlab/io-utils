@@ -34,15 +34,15 @@ class CachingChannelTest
         maximumSize = 200  // space for 3 blocks; 4th will cause a swap
       )
 
-    ch.reads should be(Nil)
+    ==(ch.reads, Nil)
 
     def seekCheck(
-        pos: Int,
-        expectedBytes: String
+      pos: Int,
+      expectedBytes: String
     )(
-        expectedBlocks: (Int, Int)*
+      expectedBlocks: (Int, Int)*
     )(
-        expectedReads: (Int, Int)*
+      expectedReads: (Int, Int)*
     ): Unit = {
       cc.seek(pos)
       check(
@@ -55,36 +55,40 @@ class CachingChannelTest
     }
 
     def check(
-        expectedBytes: String
+      expectedBytes: String
     )(
-        expectedBlocks: (Int, Int)*
+      expectedBlocks: (Int, Int)*
     )(
-        expectedReads: (Int, Int)*
+      expectedReads: (Int, Int)*
     ): Unit = {
       buf.clear()
 
       cc.readFully(buf)
 
-      buf
-        .array()
-        .slice(0, 4)
-        .map(_.toChar)
-        .mkString("") should be(
-          expectedBytes
-        )
+      ==(
+        buf
+          .array()
+          .slice(0, 4)
+          .map(_.toChar)
+          .mkString(""),
+        expectedBytes
+      )
 
-      cc
-        .blocks
-        .asScala
-        .toVector
-        .map {
-          case (offset, buffer) ⇒
-            offset.toInt → buffer.capacity()
-        }
-        .sortBy(_._1) should be(expectedBlocks)
+      ==(
+        cc
+          .blocks
+          .asScala
+          .toVector
+          .map {
+            case (offset, buffer) ⇒
+              offset.toInt → buffer.capacity()
+          }
+          .sortBy(_._1),
+        expectedBlocks
+      )
 
       // Still just one read from underlying channel
-      ch.reads should be(expectedReads)
+      ==(ch.reads, expectedReads)
     }
 
     // test.txt index:
@@ -123,15 +127,28 @@ class CachingChannelTest
     // Test a partial read
     cc.seek(408)
     buf.clear
-    cc.read(buf) should be(39)
-    buf
-      .array()
-      .slice(0, 4)
-      .map(_.toChar)
-      .mkString("") should be(
-        "SSRR"
-      )
+    ==(cc.read(buf), 39)
+    ==(
+      buf
+        .array()
+        .slice(0, 4)
+        .map(_.toChar)
+        .mkString(""),
+      "SSRR"
+    )
 
-    ch.reads should be(Seq(0 → 64,  64 → 64, 192 → 64, 256 → 64, 320 → 64, 384 → 63))
+    ==(ch.reads, Seq(0 → 64,  64 → 64, 192 → 64, 256 → 64, 320 → 64, 384 → 63))
   }
+
+  implicit def list2arraybuffer(l: Seq[(Int, Int)]): ArrayBuffer[(Long, Int)] =
+    ArrayBuffer(
+      l
+        .map {
+          t ⇒
+            (
+              t._1: Long,
+              t._2
+            )
+        }: _*
+    )
 }

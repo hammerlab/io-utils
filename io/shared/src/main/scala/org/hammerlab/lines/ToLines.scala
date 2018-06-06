@@ -4,9 +4,13 @@ import hammerlab.iterator._
 import hammerlab.show._
 import org.hammerlab.lines.Lines.empty
 
-trait ToLines[-T] {
+import scala.collection.generic.CanBuildFrom
+
+trait ContraToLines[-T] {
   def apply(t: T): Lines
 }
+
+trait ToLines[T] extends ContraToLines[T]
 
 trait LowPriorityToLines {
   /**
@@ -25,8 +29,29 @@ trait LowPriorityToLines {
 
 object ToLines
   extends LowPriorityToLines {
-  implicit def iterableToLines[T](implicit lines: ToLines[T]): ToLines[Iterable[T]] =
-    ToLines { _.map(lines(_)) }
+  implicit def iterableToLines[
+    T,
+    I[_] <: Iterable[_]
+  ](
+    implicit
+    lines: ToLines[T],
+    ev: I[T] <:< Iterable[T],
+    cbf: CanBuildFrom[Iterable[T], Lines, Iterable[Lines]]
+  ):
+    ToLines[I[T]] =
+    ToLines {
+      elems: I[T] ⇒
+        ev(elems)
+          .map[
+            Lines,
+            Iterable[Lines]
+          ](
+            elem ⇒
+              lines(elem)
+          )(
+            cbf
+          )
+    }
 
   implicit def arrayToLines[T](implicit lines: ToLines[T]): ToLines[Array[T]] =
     ToLines { _.map(lines(_)) }
@@ -36,6 +61,12 @@ object ToLines
       _
         .map(lines(_))
         .getOrElse(empty)
+    }
+
+  implicit def someToLines[T](implicit lines: ToLines[T]): ToLines[Some[T]] =
+    ToLines {
+      case Some(t) ⇒
+        lines(t)
     }
 
   implicit val bool: ToLines[Boolean] = ToLines { _.toString }

@@ -10,16 +10,17 @@ import org.hammerlab.lines.ToLinesTest._
 class ToLinesTest
   extends Suite {
   test("nested indents") {
-    import hammerlab.indent.implicits.tab
-    Foos(
-      111,
+    import hammerlab.indent.tab
+    ==(
       Foos(
-        Foos(222),
-        333,
-        444
+        111,
+        Foos(
+          Foos(222),
+          333,
+          444
+        )
       )
-    )
-    .showLines should be(
+      .showLines,
       """111
         |		222
         |	333
@@ -29,7 +30,7 @@ class ToLinesTest
   }
 
   {
-    import hammerlab.indent.implicits.spaces.two
+    import hammerlab.indent.spaces
 
     test("simple") {
       val a = A(123, "abc")
@@ -39,13 +40,15 @@ class ToLinesTest
           |  cba"""
           .stripMargin
 
-      a.showLines should be(expected)
-      Some(a).showLines should be(expected)
-      (None: Option[A]).showLines should be("")
-      a.lines.showLines should be(expected)
-      a.lines.show should be(expected)
+      ==(a.showLines, expected)
+      ==(Some(a).showLines, expected)
+      ==((Some(a): Option[A]).showLines, expected)
+      ==((None: Option[A]).showLines, "")
+      ==(a.lines.showLines, expected)
+      ==(a.lines.show, expected)
 
-      Lines.Indent(2, a.lines).show should be(
+      ==(
+        Lines.Indent(2, a.lines).show,
         """    123, abc
           |      246
           |      cba"""
@@ -62,7 +65,8 @@ class ToLinesTest
         Lines("aaa")
       )
       ps.close()
-      new String(baos.toByteArray) should be(
+      ==(
+        new String(baos.toByteArray),
         """true
           |abc
           |def
@@ -72,8 +76,8 @@ class ToLinesTest
     }
 
     test("append") {
-      indent("abc").append(",").showLines should be("  abc,")
-      Lines(Seq[String]()).append(",").showLines should be("")
+      ==(indent("abc").append(",").showLines, "  abc,")
+      ==(Lines(Seq[String]()).append(",").showLines, "")
     }
   }
 }

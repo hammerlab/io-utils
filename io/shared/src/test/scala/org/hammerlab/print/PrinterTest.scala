@@ -8,7 +8,7 @@ trait PrinterTest
   extends Suite
     with CanPrint {
 
-  implicit val tab = hammerlab.indent.implicits.tab
+  implicit val tab = hammerlab.indent.tab
 
   trait TestPrinter {
     def printer: Printer
@@ -33,7 +33,7 @@ trait PrinterTest
       )
     )
 
-    printer.read should be(expected.stripMargin)
+    ==(printer.read, expected.stripMargin)
   }
 
   test("unlimited") {
@@ -153,7 +153,8 @@ trait PrinterTest
       )
     )
 
-    printer.read should be(
+    ==(
+      printer.read,
       """aaa
         |bbb
         |	ccc

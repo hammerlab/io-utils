@@ -27,7 +27,8 @@ object delimiter extends delimiter
 object lines
   extends HasLines
      with limit
-     with Serializable {
+     with Serializable
+     with sealedtrait {
 
   import org.hammerlab.{lines ⇒ l}
 
@@ -45,8 +46,14 @@ object lines
   type Level = l.Level
    val Level = l.Level
 
+   trait sealedtrait extends l.sealedtrait
+  object sealedtrait extends   sealedtrait
+
+   trait caseclass extends l.caseclass
+  object caseclass extends   caseclass
+
    trait generic extends l.generic
-  object generic extends generic
+  object generic extends   generic
 
   object limit extends limit
 }
