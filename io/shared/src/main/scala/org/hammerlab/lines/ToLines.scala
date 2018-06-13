@@ -69,5 +69,10 @@ object ToLines
         lines(t)
     }
 
+  implicit val toLines: ToLines[Lines] =
+    ToLines {
+      lines ⇒ lines
+    }
+
   implicit val bool: ToLines[Boolean] = ToLines { _.toString }
 }

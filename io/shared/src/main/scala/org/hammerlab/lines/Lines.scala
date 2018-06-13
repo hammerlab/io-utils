@@ -64,7 +64,7 @@ object Lines {
       case Indent(lines) ⇒
         unrollIndents(lines)
           .map {
-            case Line(str, level) ⇒
+            case Line(str, level  ) ⇒
                  Line(str, level++)
           }
       case Single(str) ⇒ Iterator(Line(str))
@@ -76,7 +76,7 @@ object Lines {
 
   /* Given an [[org.hammerlab.lines.Indent]], serialize a [[Lines]] to [[String]]s */
   implicit def unwrap(lines: Lines)(implicit i: Ind): Iterator[String] =
-    unrollIndents(lines).map { toShow(_).show }
+    unrollIndents(lines).map { _.show }
 
   implicit class Ops[T](val t: T) extends AnyVal {
     /* convert an object to [[Lines]] and newline-join them to a [[String]] */

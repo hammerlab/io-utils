@@ -75,6 +75,84 @@ class ToLinesTest
       )
     }
 
+    test("indents") {
+
+      ==(
+        Lines(
+          Some(
+            Lines(
+              "ddd",
+              "eee",
+              "fff"
+            )
+          )
+          .map((lines: Lines) ⇒ indent(lines)): Option[Lines]
+        )
+        .showLines,
+        """  ddd
+          |  eee
+          |  fff"""
+          .stripMargin
+      )
+
+      ==(
+        Lines(
+          "aaa",
+          indent(
+            Lines(
+              Seq(
+                "bbb",
+                "ccc"
+              )
+            ),
+            Some(
+              Lines(
+                "ddd",
+                "eee",
+                "fff"
+              )
+            )
+            .map { indent(_) }
+          )
+        )
+        .showLines,
+        """aaa
+          |  bbb
+          |  ccc
+          |    ddd
+          |    eee
+          |    fff"""
+          .stripMargin
+      )
+
+      ==(
+        Lines(
+          "A: {",
+          indent(
+            "aaa",
+            "bbb",
+            "ccc: {",
+            indent(
+              "ddd",
+              "eee"
+            ),
+            "}"
+          ),
+          "}"
+        )
+        .showLines,
+        """A: {
+          |  aaa
+          |  bbb
+          |  ccc: {
+          |    ddd
+          |    eee
+          |  }
+          |}"""
+          .stripMargin
+      )
+    }
+
     test("append") {
       ==(indent("abc").append(",").showLines, "  abc,")
       ==(Lines(Seq[String]()).append(",").showLines, "")

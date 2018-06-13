@@ -30,7 +30,7 @@ lazy val channel = project.settings(
 )
 
 lazy val io = crossProject.settings(
-  v"5.1.0",
+  v"5.1.1",
   dep(
     case_app,
     cats,
