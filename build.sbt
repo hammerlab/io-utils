@@ -6,7 +6,7 @@ default(
 )
 
 lazy val bytes = crossProject.settings(
-  v"1.2.1",
+  r"1.2.0",
   dep(
     case_app,
     cats
@@ -17,7 +17,7 @@ lazy val `bytes.jvm` = bytes.jvm
 lazy val `bytes-x`   = parent(`bytes.js`, `bytes.jvm`)
 
 lazy val channel = project.settings(
-  v"1.5.0",
+  v"1.5.1",
   dep(
     log4j tests,
     math.utils % "2.2.0",
@@ -34,9 +34,9 @@ lazy val io = crossProject.settings(
   dep(
     case_app,
     cats,
-    iterators       % "2.1.0",
+    iterators       % "2.2.0",
     shapeless_utils % "1.3.0",
-    types           % "1.1.0"
+    types           % "1.2.0"
   ),
   consoleImport(
     "hammerlab.lines._",
