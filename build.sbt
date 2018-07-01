@@ -6,7 +6,7 @@ default(
 )
 
 lazy val bytes = crossProject.settings(
-  r"1.2.0",
+  v"1.2.0",
   dep(
     case_app,
     cats
@@ -52,9 +52,24 @@ lazy val `io.jvm` = io.jvm.settings(
 )
 lazy val `io-x` = parent(`io.js`, `io.jvm`)
 
+lazy val markdown = crossProject.settings(
+  v"0.1.0",
+  dep(
+    hammerlab.math.format % "1.0.0",
+    shapeless
+  )
+)
+.dependsOn(
+  io
+)
+lazy val `markdown.js`  = markdown.js
+lazy val `markdown.jvm` = markdown.jvm
+lazy val `markdown-x`   = parent(`markdown.js`, `markdown.jvm`)
+
 lazy val `io-utils` =
   root(
     channel,
     `bytes-x`,
-    `io-x`
+    `io-x`,
+    `markdown-x`
   )
