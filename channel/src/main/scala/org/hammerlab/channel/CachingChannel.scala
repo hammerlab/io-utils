@@ -18,7 +18,7 @@ import scala.math.{ max, min }
  * @param channel underlying channel to provide a caching layer over
  */
 case class CachingChannel[Channel <: SeekableByteChannel](channel: Channel)(
-    implicit config: Config
+  implicit config: Config
 )
   extends SeekableByteChannel
     with BufferByteChannel

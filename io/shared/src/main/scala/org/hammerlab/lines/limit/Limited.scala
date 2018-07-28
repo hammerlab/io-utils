@@ -88,7 +88,10 @@ object Limited {
                   )
               }
               .getOrElse(
-                elems.take(limit)
+                Lines(
+                  elems.take(limit),
+                  "…"
+                )
               )
           case _ ⇒
             header
