@@ -1,7 +1,7 @@
 # io-utils
 
 [![Build Status](https://travis-ci.org/hammerlab/io-utils.svg?branch=master)](https://travis-ci.org/hammerlab/io-utils)
-[![Coverage Status](https://coveralls.io/repos/github/hammerlab/io-utils/badge.svg?branch=master)](https://coveralls.io/github/hammerlab/io-utils?branch=master)
+[![codecov](https://codecov.io/gh/hammerlab/io-utils/branch/master/graph/badge.svg)](https://codecov.io/gh/hammerlab/io-utils)
 
 Libraries for console/file I/O, processing/formatting sizes in bytes, etc:
 
