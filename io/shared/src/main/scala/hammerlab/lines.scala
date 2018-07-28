@@ -10,7 +10,7 @@ trait limit {
   type Limited[T] = l.Limited[T]
    val Limited    = l.Limited
 
-  val Unlimited = l.UnLimited
+  val Unlimited = l.Unlimited
 
   type Max = l.Max
    val Max = l.Max

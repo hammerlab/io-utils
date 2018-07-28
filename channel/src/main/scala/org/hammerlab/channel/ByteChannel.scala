@@ -8,7 +8,7 @@ import org.hammerlab.io.Buffer
 
 /**
  * Readable, "skippable" common interface over [[InputStream]]s, [[Iterator[Byte]]]s, and
- * [[channels.SeekableByteChannel]]s.
+ * [[channels.ReadableByteChannel]]s.
  *
  * When wrapping [[channels.SeekableByteChannel]]s, exposes [[SeekableByteChannel.seek]] as well.
  */
@@ -217,6 +217,7 @@ trait BufferByteChannel
 
 trait ArrayByteChannel
   extends ByteChannel {
+
   /**
    * Implement reading into a [[ByteBuffer]] in terms of reads into an [[Array]] of [[Byte]]s.
    */
