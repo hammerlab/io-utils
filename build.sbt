@@ -30,13 +30,13 @@ lazy val channel = project.settings(
 )
 
 lazy val io = crossProject.settings(
-  v"5.1.1",
+  v"5.2.0",
   dep(
     case_app,
     cats,
     iterators       % "2.2.0",
     shapeless_utils % "1.3.0",
-    types           % "1.2.0"
+    types           % "1.3.0"
   ),
   consoleImport(
     "hammerlab.lines._",
