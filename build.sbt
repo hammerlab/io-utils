@@ -27,28 +27,29 @@ lazy val channel = project.settings(
      io.jvm
 )
 
-lazy val io = cross.settings(
-  v"5.2.0",
-  dep(
-    case_app,
-    cats,
-    iterators       % "2.2.0",
-    shapeless_utils % "1.3.0",
-    types           % "1.3.0"
-  ),
-  consoleImport(
-    "hammerlab.lines._",
-    "hammerlab.print._",
-    "hammerlab.show._",
-    "hammerlab.indent.tab"
-  )
-)
-lazy val `io.js`  = io.js
-lazy val `io.jvm` = io.jvm.settings(
-  dep(paths),
-  consoleImport("hammerlab.path._")
-)
-lazy val `io-x` = parent(`io.js`, `io.jvm`)
+lazy val io =
+  cross
+    .settings(
+      v"5.2.0",
+      dep(
+        case_app,
+        cats,
+        iterators       % "2.2.0",
+        shapeless_utils % "1.3.0",
+        types           % "1.3.0"
+      ),
+      consoleImport(
+        "hammerlab.lines._",
+        "hammerlab.print._",
+        "hammerlab.show._",
+        "hammerlab.indent.tab"
+      )
+    )
+    .jvmSettings(
+      dep(paths),
+      consoleImport("hammerlab.path._")
+    )
+lazy val `io-x` = io.x
 
 lazy val markdown = cross.settings(
   r"0.1.0",
