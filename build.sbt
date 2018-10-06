@@ -5,16 +5,14 @@ default(
   )
 )
 
-lazy val bytes = crossProject.settings(
+lazy val bytes = cross.settings(
   r"1.2.0",
   dep(
     case_app,
     cats
   )
 )
-lazy val `bytes.js`  = bytes.js
-lazy val `bytes.jvm` = bytes.jvm
-lazy val `bytes-x`   = parent(`bytes.js`, `bytes.jvm`)
+lazy val `bytes-x` = bytes.x
 
 lazy val channel = project.settings(
   v"1.5.2",
@@ -25,11 +23,11 @@ lazy val channel = project.settings(
     slf4j
   )
 ).dependsOn(
-  `bytes.jvm`,
-     `io.jvm`
+  bytes.jvm,
+     io.jvm
 )
 
-lazy val io = crossProject.settings(
+lazy val io = cross.settings(
   v"5.2.0",
   dep(
     case_app,
@@ -52,7 +50,7 @@ lazy val `io.jvm` = io.jvm.settings(
 )
 lazy val `io-x` = parent(`io.js`, `io.jvm`)
 
-lazy val markdown = crossProject.settings(
+lazy val markdown = cross.settings(
   r"0.1.0",
   dep(
     hammerlab.math.format % "1.0.0",
@@ -62,13 +60,11 @@ lazy val markdown = crossProject.settings(
 .dependsOn(
   io
 )
-lazy val `markdown.js`  = markdown.js
-lazy val `markdown.jvm` = markdown.jvm
-lazy val `markdown-x`   = parent(`markdown.js`, `markdown.jvm`)
+lazy val `markdown-x` = markdown.x
 
 lazy val `io-utils` =
   root(
-    channel,
+     channel,
     `bytes-x`,
     `io-x`,
     `markdown-x`
