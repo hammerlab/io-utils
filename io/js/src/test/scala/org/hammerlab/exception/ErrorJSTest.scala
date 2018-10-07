@@ -12,7 +12,7 @@ class ErrorJSTest
     Seq[Line](
        "java.lang.IllegalArgumentException: error msg",
       l"  at <jscode>.$$c_jl_IllegalArgumentException.$$c_jl_Throwable.fillInStackTrace__jl_Throwable($any)",
-      l"  at <jscode>.$$c_jl_IllegalArgumentException.$$c_jl_Throwable.init___T__jl_Throwable($any)",
+      l"  at <jscode>.$$c_jl_IllegalArgumentException.$$c_jl_Throwable.init___T__jl_Throwable__Z__Z($any)",
       l"  at java.lang.IllegalArgumentException.<init>($any)",
       l"  at <jscode>.{anonymous}()($any)"
     )
@@ -22,7 +22,7 @@ class ErrorJSTest
        "Caused by:",
       l"  java.lang.NullPointerException",
       l"    at <jscode>.$$c_jl_NullPointerException.$$c_jl_Throwable.fillInStackTrace__jl_Throwable($any)",
-      l"    at <jscode>.$$c_jl_NullPointerException.$$c_jl_Throwable.init___T__jl_Throwable($any)",
+      l"    at <jscode>.$$c_jl_NullPointerException.$$c_jl_Throwable.init___T__jl_Throwable__Z__Z($any)",
       l"    at java.lang.NullPointerException.<init>($any)"
     )
 }

@@ -1,5 +1,3 @@
 package org.hammerlab.print
 
-trait PrinterCompanion {
-
-}
+trait PrinterCompanion
