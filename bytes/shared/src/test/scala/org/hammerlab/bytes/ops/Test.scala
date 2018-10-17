@@ -1,9 +1,9 @@
-package org.hammerlab.bytes.syntax
+package org.hammerlab.bytes.ops
 
 import org.hammerlab.Suite
 
 /**
- * This test is in a sub-pkg to get at [[hammerlab.bytes.BytesOps]] without interference from
+ * This test is in a sub-pkg to get at [[hammerlab.bytes.syntax]] without interference from
  * [[org.hammerlab.bytes.BytesWrapper]]
  */
 class Test

@@ -6,7 +6,7 @@ default(
 )
 
 lazy val bytes = cross.settings(
-  r"1.2.0",
+  v"1.3.0",
   dep(
     case_app,
     cats
