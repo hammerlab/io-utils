@@ -6,7 +6,7 @@ default(
 )
 
 lazy val bytes = cross.settings(
-  r"1.2.0",
+  v"1.3.0",
   dep(
     case_app,
     cats
@@ -15,7 +15,7 @@ lazy val bytes = cross.settings(
 lazy val `bytes-x` = bytes.x
 
 lazy val channel = project.settings(
-  v"1.5.3",
+  v"1.5.4",
   dep(
     log4j tests,
     math.utils % "2.3.0",
@@ -30,7 +30,7 @@ lazy val channel = project.settings(
 lazy val io =
   cross
     .settings(
-      v"5.2.1",
+      r"5.2.1",
       dep(
         case_app,
         cats,

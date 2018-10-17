@@ -1,5 +1,8 @@
 package hammerlab
 
+import org.hammerlab.{ bytes ⇒ b }
+import org.hammerlab.bytes.syntax
+
 /**
  * Import-friendly API, exposing interesting bits via:
  *
@@ -7,12 +10,17 @@ package hammerlab
  * import hammerlab.bytes._
  * }}}
  */
-object bytes {
+object bytes
+  extends syntax {
+
+   trait syntax extends b.syntax
+  object syntax extends   syntax
+
   type Bytes = org.hammerlab.bytes.Bytes
   val  Bytes = org.hammerlab.bytes.Bytes
 
-  implicit val BytesOps = org.hammerlab.bytes.BytesWrapper _
   val format = org.hammerlab.bytes.Bytes.format
+
   type  B = org.hammerlab.bytes. B
   type KB = org.hammerlab.bytes.KB
   type MB = org.hammerlab.bytes.MB
