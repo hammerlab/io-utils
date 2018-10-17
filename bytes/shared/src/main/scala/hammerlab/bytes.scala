@@ -1,5 +1,6 @@
 package hammerlab
 
+import org.hammerlab.{ bytes ⇒ b }
 import org.hammerlab.bytes.syntax
 
 /**
@@ -12,7 +13,8 @@ import org.hammerlab.bytes.syntax
 object bytes
   extends syntax {
 
-  object syntax extends syntax
+   trait syntax extends b.syntax
+  object syntax extends   syntax
 
   type Bytes = org.hammerlab.bytes.Bytes
   val  Bytes = org.hammerlab.bytes.Bytes
