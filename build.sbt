@@ -52,7 +52,7 @@ lazy val io =
 lazy val `io-x` = io.x
 
 lazy val markdown = cross.settings(
-  v"0.1.1",
+  r"0.1.1",
   dep(
     hammerlab.math.format % "1.1.0",
     shapeless
